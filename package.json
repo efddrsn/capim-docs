@@ -1,0 +1,13 @@
+{
+  "name": "capim-docs-root",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shim de monorepo: força o Nixpacks a detectar Node 20 e delega build/start para app/",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "cd app && (npm ci || npm install)",
+    "start": "cd app && node server.js"
+  }
+}

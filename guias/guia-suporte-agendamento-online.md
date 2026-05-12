@@ -98,11 +98,11 @@ O paciente abre o link no celular ou no computador e passa por estes passos (sem
 
 ## > 3. 💼 Casos de uso esperados
 
-* **Caso 1, clínica coloca link no Instagram bio:** cria um link único "Avaliação inicial – 30 min" com os dois dentistas marcados, copia o URL e cola no perfil do Instagram. Pacientes que clicam caem no fluxo guiado e marcam sozinhos. A recepção abre a Agenda na segunda de manhã, vê os "Pendente" que entraram no fim de semana e confirma um a um.
-* **Caso 2, dentista quer separar Avaliação e Retorno:** cria dois links diferentes, "Avaliação inicial – 60 min" e "Retorno – 15 min". Cada um com sua duração e seu título. Manda o link de Retorno só pros pacientes em tratamento, e o de Avaliação no Instagram.
+* **Caso 1, clínica coloca link no Instagram bio:** cria um link único "Avaliação inicial de 30 min" com os dois dentistas marcados, copia o URL e cola no perfil do Instagram. Pacientes que clicam caem no fluxo guiado e marcam sozinhos. A recepção abre a Agenda na segunda de manhã, vê os "Pendente" que entraram no fim de semana e confirma um a um.
+* **Caso 2, dentista quer separar Avaliação e Retorno:** cria dois links diferentes, "Avaliação inicial de 60 min" e "Retorno de 15 min". Cada um com sua duração e seu título. Manda o link de Retorno só pros pacientes em tratamento, e o de Avaliação no Instagram.
 * **Caso 3, recepcionista usa o link como atalho no atendimento:** quando o paciente liga e ela está sobrecarregada, manda o link no WhatsApp dele com o botão "Enviar no WhatsApp" e pede pra ele finalizar sozinho. Útil em horários de pico.
 * **Caso 4, paciente liga pedindo pra mudar o horário do que marcou pelo link:** a tela final mostrada ao paciente já orienta a ligar pra clínica (não dá pra remarcar pelo link). A recepção arrasta o agendamento na Agenda normalmente.
-* **Caso 5, clínica quer divulgar Black Friday:** cria um link específico "Limpeza promocional – 30 min" com marcador "Promo", divulga no WhatsApp em massa. Depois da campanha, exclui o link.
+* **Caso 5, clínica quer divulgar Black Friday:** cria um link específico "Limpeza promocional de 30 min" com marcador "Promo", divulga no WhatsApp em massa. Depois da campanha, exclui o link.
 
 ## > 4. ❓ FAQ
 

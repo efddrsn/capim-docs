@@ -19,7 +19,7 @@ O app sobe em `http://localhost:3000` e lê os markdowns de `../guias/*.md`.
 ## Como deployar no Railway
 
 1. Crie um projeto no Railway e conecte ao repo `efddrsn/capim-docs`.
-2. Em **Settings → Root Directory**, defina `app`.
+2. Em **Settings → Root Directory**, **deixe vazio** (ou `/`). O `railway.json` na raiz já entra em `app/` na hora de buildar e rodar. Se você definir Root Directory = `app`, a pasta `guias/` (que mora na raiz do repo) **não vai pro container** e o app não acha guia nenhum.
 3. Em **Variables**, configure (mesmos nomes do `.env.example`):
    * `APP_PASSWORD`: senha que o time vai usar pra entrar.
    * `SESSION_SECRET`: string aleatória forte (use `openssl rand -hex 32`).

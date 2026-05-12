@@ -372,9 +372,15 @@ app.post('/api/pergunta', requireAuth, sameOriginGuard, async (req, res) => {
 });
 
 app.get('/healthz', (req, res) => res.json({ ok: true, guides: listGuides().length }));
+app.get('/favicon.ico', (req, res) => res.status(204).end());
 
-app.listen(PORT, () => {
-  console.log(`capim-docs app ouvindo em :${PORT}`);
+app.use((err, req, res, next) => {
+  console.error('unhandled', err);
+  res.status(500).send('erro interno');
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`capim-docs app ouvindo em 0.0.0.0:${PORT}`);
   console.log(`guias dir: ${GUIAS_DIR}`);
   console.log(`guias encontrados: ${listGuides().length}`);
 });

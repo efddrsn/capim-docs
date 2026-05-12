@@ -142,7 +142,7 @@ R: Sim. Cada agendamento tem um marcador separado de "Compareceu" e "Não compar
 | "O paciente marcou pela Camila num horário que eu bloqueei." | Possível corrida de timing: a Camila já tinha aquele slot em mãos quando o dentista criou o bloqueio. | Confirmar o horário do bloqueio e o horário em que a Camila respondeu o paciente. Orientar a clínica a remarcar manualmente. | Escalar pro time da Camila se for recorrente em uma clínica específica. |
 | "A V2 da agenda está com bug X." | Bug específico da V2, ainda em rollout. | Coletar print, vídeo, ID da clínica e versão do navegador. Se reprodutível, orientar a usuária a usar V1 temporariamente (desligar "Mostrar agenda V2" no perfil), se possível. | Sempre escalar bugs da V2 pra eng. A V2 está em rollout, não é GA. |
 
-**Para quem escalar:** 🚧 PENDENTE: confirmar com Produto qual é o time/canal dono da Agenda hoje (squad? canal no Slack? label no Linear?).
+**Para quem escalar:** **Time de Sustentação** (canal interno Capim). Toda issue de bug, ativação de feature ou pedido de reativação de agendamento cancelado entra por esse canal.
 
 ## > 6. ⚠️ Limitações conhecidas
 
@@ -203,9 +203,7 @@ R: Sim. Cada agendamento tem um marcador separado de "Compareceu" e "Não compar
 * [ ] Bugs conhecidos em produção hoje na Agenda (não bugs potenciais): lista atual mantida em algum lugar?
 
 **Escalação**
-* [ ] Time/squad dono da Agenda hoje.
-* [ ] Canal oficial (Slack ou Linear) pra suporte abrir chamado relacionado à Agenda.
-* [ ] SLA esperado de resposta pra cada nível de severidade.
+* [ ] SLA esperado de resposta pra cada nível de severidade no Time de Sustentação.
 
 ## > ✅ Validar com produto/eng antes de publicar
 

@@ -146,6 +146,51 @@ function extractLacunas(guide) {
   return out;
 }
 
+function renderGuideLacunas(lacunas) {
+  if (!lacunas.length) return '';
+  const grouped = {};
+  for (const l of lacunas) {
+    const key = l.subsection || 'Geral';
+    (grouped[key] ||= []).push(l);
+  }
+  const groups = Object.entries(grouped)
+    .map(
+      ([title, items]) => `
+      <div class="lacuna-subgroup">
+        <h3>${escapeHtml(title)}</h3>
+        <ul class="lacuna-list">
+          ${items
+            .map(
+              (l) => `
+            <li class="lacuna-item" data-id="${escapeAttr(l.id)}">
+              <div class="lacuna-question">${escapeHtml(l.question)}</div>
+              <button class="answer-btn" data-guide="${escapeAttr(l.guide)}" data-question="${escapeAttr(l.question)}">Responder</button>
+            </li>`
+            )
+            .join('')}
+        </ul>
+      </div>`
+    )
+    .join('');
+  return `
+    <section class="guide-section guide-lacunas">
+      <h2>🚧 Lacunas em aberto deste guia</h2>
+      <p class="lead">Perguntas que ainda dependem de validação humana. Responda o que souber e vira issue no GitHub pra atualizar este guia.</p>
+      ${groups}
+    </section>
+  `;
+}
+
+function renderGuideAskBox(guide) {
+  return `
+    <section class="guide-section guide-ask">
+      <h2>＋ Mandar pergunta sobre ${escapeHtml(guide.title)}</h2>
+      <p class="lead">Outra dúvida sobre essa feature? Mande pra cá: vira issue no GitHub, e nós avaliamos se atualiza este guia ou se entra como FAQ.</p>
+      <button class="ask-btn primary-action" data-topic="${escapeAttr(guide.title)}">Abrir formulário</button>
+    </section>
+  `;
+}
+
 async function createIssue({ title, body, labels }) {
   const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues`, {
     method: 'POST',
@@ -188,8 +233,6 @@ function renderPage({ title, body, user, navActive }) {
     <a class="brand" href="/">📘 Capim Docs</a>
     <nav class="top-nav">
       <a href="/" class="${navActive === 'home' ? 'active' : ''}">Início</a>
-      <a href="/lacunas" class="${navActive === 'lacunas' ? 'active' : ''}">Lacunas em aberto</a>
-      <button id="open-new-question" class="cta">＋ Mandar pergunta</button>
     </nav>
     <div class="who">${user ? `<span class="badge">logado</span> <a href="/logout">sair</a>` : ''}</div>
   </header>
@@ -269,12 +312,16 @@ app.get('/guia/:slug', requireAuth, (req, res) => {
   if (!guide) return res.status(404).send(renderPage({ title: 'Não encontrado', body: '<h1>Guia não encontrado</h1>', user: true }));
   const renderer = buildMarkedRenderer();
   const html = marked.parse(guide.raw, { renderer, gfm: true, breaks: false });
+  const lacunas = extractLacunas(guide);
   const body = `
-    <article class="doc" data-guide="${escapeAttr(guide.slug)}">
+    <article class="doc" data-guide="${escapeAttr(guide.slug)}" data-guide-title="${escapeAttr(guide.title)}">
       <div class="doc-actions">
         <a class="back" href="/">← voltar</a>
       </div>
-      ${html}
+      <div class="doc-body">${html}</div>
+      <hr class="end-divider"/>
+      ${renderGuideLacunas(lacunas)}
+      ${renderGuideAskBox(guide)}
     </article>
   `;
   res.send(renderPage({ title: guide.title, body, user: true, navActive: guide.slug }));

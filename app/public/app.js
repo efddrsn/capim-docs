@@ -14,12 +14,13 @@
     const ctxHtml = ctx ? `<div class="ctx">${escapeHtml(ctx)}</div>` : '';
     const fieldsHtml = fields
       .map((f) => {
+        const val = escapeHtml(f.value || '');
         if (f.type === 'textarea') {
           return `<label for="f-${f.name}">${escapeHtml(f.label)}</label>
-            <textarea id="f-${f.name}" name="${f.name}" ${f.required ? 'required' : ''} placeholder="${escapeHtml(f.placeholder || '')}"></textarea>`;
+            <textarea id="f-${f.name}" name="${f.name}" ${f.required ? 'required' : ''} placeholder="${escapeHtml(f.placeholder || '')}">${val}</textarea>`;
         }
         return `<label for="f-${f.name}">${escapeHtml(f.label)}</label>
-          <input id="f-${f.name}" type="text" name="${f.name}" placeholder="${escapeHtml(f.placeholder || '')}" />`;
+          <input id="f-${f.name}" type="text" name="${f.name}" placeholder="${escapeHtml(f.placeholder || '')}" value="${val}" />`;
       })
       .join('');
     modal.innerHTML = `
@@ -130,13 +131,16 @@
     });
   });
 
-  // Botão "Mandar pergunta" do topo
-  document.getElementById('open-new-question')?.addEventListener('click', () => {
+  // Botão "Mandar pergunta sobre <guia>" dentro do guia
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.ask-btn');
+    if (!btn) return;
+    const topic = btn.dataset.topic || '';
     openModal({
-      title: 'Mandar pergunta nova',
-      ctx: 'Sua pergunta vira issue no GitHub e a gente analisa se entra como FAQ num guia existente ou se merece um guia novo.',
+      title: topic ? `Mandar pergunta sobre ${topic}` : 'Mandar pergunta',
+      ctx: topic ? `Tópico: ${topic}` : null,
       fields: [
-        { name: 'topic', label: 'Sobre qual módulo/feature? (opcional)', type: 'text', placeholder: 'ex: Agenda, Maquininha, Capix…' },
+        { name: 'topic', label: 'Sobre qual módulo/feature?', type: 'text', placeholder: 'ex: Agenda', value: topic },
         { name: 'question', label: 'Sua pergunta', type: 'textarea', required: true, placeholder: 'Escreva a pergunta na voz do dentista, do suporte ou do CS.' },
         { name: 'author', label: 'Seu nome (opcional)', type: 'text', placeholder: 'Como assinar' },
       ],
@@ -144,4 +148,44 @@
       onSubmit: (data) => postJSON('/api/pergunta', data),
     });
   });
+
+  // Adiciona botão de feedback em qualquer parágrafo, item de lista ou blockquote do guia
+  function annotateBlocks() {
+    const doc = document.querySelector('article.doc .doc-body');
+    if (!doc) return;
+    const SKIP_SELECTORS = '.lacuna-item, .lacuna-list, .guide-ask, .doc-actions, pre, code';
+    const elements = doc.querySelectorAll('p, li, blockquote, td');
+    let counter = 0;
+    elements.forEach((el) => {
+      if (!el.textContent.trim()) return;
+      if (el.closest(SKIP_SELECTORS) && !el.matches('li, blockquote, p, td')) return;
+      if (el.querySelector(':scope > .feedback-btn')) return;
+      // pula <li> que só contém uma sub-lista (sem texto direto)
+      const directText = Array.from(el.childNodes)
+        .filter((n) => n.nodeType === Node.TEXT_NODE || (n.nodeType === Node.ELEMENT_NODE && !/UL|OL/.test(n.tagName)))
+        .map((n) => n.textContent || '')
+        .join('')
+        .trim();
+      if (!directText) return;
+      counter++;
+      const id = `b-${counter}`;
+      el.classList.add('doc-block');
+      el.dataset.blockId = id;
+      const trecho = directText.slice(0, 140);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'feedback-btn block-fb';
+      btn.title = 'Comentar este trecho';
+      btn.textContent = '💬';
+      btn.dataset.section = id;
+      btn.dataset.trecho = trecho;
+      el.appendChild(btn);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', annotateBlocks);
+  } else {
+    annotateBlocks();
+  }
 })();

@@ -1,0 +1,19 @@
+{
+  "name": "capim-docs-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Visualizador privado dos guias de suporte da Capim com feedback e perguntas",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "marked": "^14.1.4"
+  }
+}

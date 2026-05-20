@@ -4,13 +4,20 @@ const path = require('path');
 const fs = require('fs');
 const { marked } = require('marked');
 
+const {
+  GUIAS_DIR,
+  slugify,
+  listGuides,
+  findGuide,
+  extractLacunas,
+  createIssue,
+} = require('./lib');
+const { createMcpRouter } = require('./mcp');
+
 const PORT = process.env.PORT || 3000;
 const APP_PASSWORD = process.env.APP_PASSWORD;
 const SESSION_SECRET = process.env.SESSION_SECRET;
 const GITHUB_PAT = process.env.GITHUB_PAT;
-const GITHUB_OWNER = process.env.GITHUB_OWNER || 'efddrsn';
-const GITHUB_REPO = process.env.GITHUB_REPO || 'capim-docs';
-const GUIAS_DIR = path.resolve(__dirname, process.env.GUIAS_DIR || '../guias');
 const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || '';
 
 for (const [k, v] of Object.entries({ APP_PASSWORD, SESSION_SECRET, GITHUB_PAT })) {
@@ -22,23 +29,6 @@ for (const [k, v] of Object.entries({ APP_PASSWORD, SESSION_SECRET, GITHUB_PAT }
 
 const app = express();
 app.set('trust proxy', 1);
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use('/static', express.static(path.join(__dirname, 'public')));
-app.use(
-  session({
-    name: 'capim_docs_sid',
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-    },
-  })
-);
 
 function requireAuth(req, res, next) {
   if (req.session && req.session.authed) return next();
@@ -51,35 +41,6 @@ function sameOriginGuard(req, res, next) {
   const origin = req.get('Origin') || req.get('Referer') || '';
   if (origin.startsWith(PUBLIC_BASE_URL)) return next();
   return res.status(403).json({ error: 'bad origin' });
-}
-
-function listGuides() {
-  if (!fs.existsSync(GUIAS_DIR)) return [];
-  return fs
-    .readdirSync(GUIAS_DIR)
-    .filter((f) => f.endsWith('.md'))
-    .sort()
-    .map((file) => {
-      const slug = file.replace(/^guia-suporte-/, '').replace(/\.md$/, '');
-      const raw = fs.readFileSync(path.join(GUIAS_DIR, file), 'utf8');
-      const titleMatch = raw.match(/^#\s+(.+)$/m);
-      const title = titleMatch ? titleMatch[1].replace(/^[^\p{L}\p{N}]*\s*/u, '').trim() : slug;
-      return { slug, file, title, raw };
-    });
-}
-
-function findGuide(slug) {
-  return listGuides().find((g) => g.slug === slug);
-}
-
-function slugify(text) {
-  return text
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-    .slice(0, 80);
 }
 
 function buildMarkedRenderer() {
@@ -107,43 +68,6 @@ function escapeAttr(s) {
 
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function extractLacunas(guide) {
-  const lines = guide.raw.split('\n');
-  const out = [];
-  let inSection = false;
-  let currentSubsection = null;
-  for (const line of lines) {
-    const headingMatch = line.match(/^##\s*>?\s*(.+)$/);
-    if (headingMatch) {
-      const heading = headingMatch[1].trim();
-      if (/🚧/.test(heading) && /lacunas/i.test(heading)) {
-        inSection = true;
-        currentSubsection = null;
-        continue;
-      }
-      if (inSection) break;
-    }
-    if (!inSection) continue;
-    const subMatch = line.match(/^\*\*(.+?)\*\*\s*$/);
-    if (subMatch) {
-      currentSubsection = subMatch[1].trim();
-      continue;
-    }
-    const bulletMatch = line.match(/^\s*\*\s*\[\s\]\s*(.+)$/);
-    if (bulletMatch) {
-      const question = bulletMatch[1].trim();
-      out.push({
-        id: slugify(question).slice(0, 60) + '-' + (out.length + 1),
-        question,
-        subsection: currentSubsection,
-        guide: guide.slug,
-        guideTitle: guide.title,
-      });
-    }
-  }
-  return out;
 }
 
 function renderGuideLacunas(lacunas) {
@@ -191,27 +115,6 @@ function renderGuideAskBox(guide) {
   `;
 }
 
-async function createIssue({ title, body, labels }) {
-  const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${GITHUB_PAT}`,
-      Accept: 'application/vnd.github+json',
-      'Content-Type': 'application/json',
-      'X-GitHub-Api-Version': '2022-11-28',
-      'User-Agent': 'capim-docs-app',
-    },
-    body: JSON.stringify({ title, body, labels }),
-  });
-  if (!res.ok) {
-    const txt = await res.text();
-    const err = new Error(`GitHub API ${res.status}: ${txt}`);
-    err.status = res.status;
-    throw err;
-  }
-  return res.json();
-}
-
 function renderPage({ title, body, user, navActive }) {
   const guides = listGuides();
   const navHtml = guides
@@ -250,6 +153,7 @@ function renderPage({ title, body, user, navActive }) {
 </html>`;
 }
 
+function registerRoutes() {
 app.get('/login', (req, res) => {
   if (req.session && req.session.authed) return res.redirect('/');
   const next = req.query.next || '/';
@@ -425,9 +329,44 @@ app.use((err, req, res, next) => {
   console.error('unhandled', err);
   res.status(500).send('erro interno');
 });
+}
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`capim-docs app ouvindo em 0.0.0.0:${PORT}`);
-  console.log(`guias dir: ${GUIAS_DIR}`);
-  console.log(`guias encontrados: ${listGuides().length}`);
+async function main() {
+  // /mcp roda em modo stateless com bearer próprio, SEM cookie de sessão.
+  // Por isso entra ANTES da middleware de session — pra evitar emitir Set-Cookie
+  // pro Claude/Custom Connector e pra deixar bem claro que os caminhos do MCP
+  // não compartilham identidade com o app web.
+  app.use('/mcp', await createMcpRouter());
+
+  app.use(express.urlencoded({ extended: false }));
+  app.use(express.json());
+  app.use('/static', express.static(path.join(__dirname, 'public')));
+  app.use(
+    session({
+      name: 'capim_docs_sid',
+      secret: SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+      },
+    })
+  );
+
+  registerRoutes();
+
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`capim-docs app ouvindo em 0.0.0.0:${PORT}`);
+    console.log(`guias dir: ${GUIAS_DIR}`);
+    console.log(`guias encontrados: ${listGuides().length}`);
+    console.log(`MCP endpoint: ${process.env.MCP_BEARER_TOKEN ? 'habilitado' : 'DESABILITADO (MCP_BEARER_TOKEN ausente)'}`);
+  });
+}
+
+main().catch((err) => {
+  console.error('[fatal] falha no boot:', err);
+  process.exit(1);
 });

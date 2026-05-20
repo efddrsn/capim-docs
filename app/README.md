@@ -47,8 +47,98 @@ O app sobe em `http://localhost:3000` e lê os markdowns de `../guias/*.md`.
 * `lacuna` (resposta a uma lacuna em aberto)
 * `pergunta-saas` (pergunta nova do time)
 * `guia:<slug>` (ex: `guia:agenda`)
+* `via:claude` (issue criada via endpoint MCP — pra diferenciar do que vem do app web)
 
 Criar essas labels antes de subir (ou deixar que apareçam automaticamente quando vier a primeira issue: o GitHub aceita labels novas via API).
+
+## MCP endpoint
+
+Além do app web, o mesmo processo Express expõe um endpoint **MCP HTTP** (`Streamable HTTP`, modo stateless) em **`POST /mcp`**, pra que o Claude dos colegas (via Custom Connector no Claude Teams) consuma os guias como contexto e use as features de feedback sem ninguém precisar abrir o app.
+
+### Tools expostas (descriptions em pt-BR no schema)
+
+Leitura:
+
+* `list_guides()` — lista slug, title e headings (índice) de todos os guias.
+* `read_guide({ slug })` — markdown completo de um guia.
+* `list_lacunas({ slug? })` — lacunas em aberto (agregadas ou de um guia).
+
+Escrita (cada uma cria uma Issue no `efddrsn/capim-docs`):
+
+* `submit_feedback({ slug, section?, comment, author })` — labels: `feedback`, `guia:<slug>`, `via:claude`.
+* `respond_lacuna({ slug, lacuna_text, response, author })` — labels: `lacuna`, `guia:<slug>`, `via:claude`.
+* `ask_question({ question, author })` — labels: `pergunta-saas`, `via:claude`.
+
+`author` é **obrigatório** em todas as tools de escrita. O footer de cada issue inclui `Autor: {author}\nOrigem: Claude MCP`. As descriptions das tools de escrita instruem explicitamente o Claude a mostrar preview da issue (título, corpo, labels) e pedir confirmação antes de chamar.
+
+### Autenticação
+
+Header `Authorization: Bearer <MCP_BEARER_TOKEN>`. Sem o header (ou com token errado), o `/mcp` devolve **401**. O `/mcp/health` também exige bearer (devolve `{ ok, guides, tools }`).
+
+Token compartilhado é OK pra MVP — atribuição/identidade vai pelo campo `author` em cada chamada. Gere o token com:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+E configure como `MCP_BEARER_TOKEN` no `.env` local e nas Variables do Railway.
+
+### URL pública
+
+```
+${PUBLIC_BASE_URL}/mcp
+```
+
+Em produção, algo como `https://capim-docs.up.railway.app/mcp`.
+
+### Como adicionar como Custom Connector no Claude Teams
+
+> Apenas admins do workspace conseguem adicionar. Depois de adicionado, o connector aparece automaticamente pros membros do workspace.
+
+1. No Claude (claude.ai), entrar em **Settings** (canto inferior esquerdo, no menu do nome).
+2. Aba **Connectors** (ou **Integrations**, dependendo da versão da UI).
+3. Clicar em **Add custom connector**.
+4. Preencher:
+   * **Name**: `Capim Docs`
+   * **URL**: `https://<seu-domínio-railway>/mcp`
+   * **Auth**: escolher **Bearer token** e colar o valor de `MCP_BEARER_TOKEN`.
+5. Salvar. O Claude vai chamar `tools/list` automaticamente e mostrar as 6 tools.
+6. (Opcional) Habilitar pro workspace inteiro pra que todo mundo do time veja o connector.
+
+A partir daí, qualquer membro do workspace pode falar com o Claude em pt-BR pedindo coisas como "como funciona a Agenda?", "lista as lacunas em aberto do Estoque", "manda esse feedback aqui pro guia X" — o Claude pede confirmação antes de criar issue.
+
+### O que o MCP **não** consegue fazer (por design)
+
+O `GITHUB_PAT` usado pelo app (e portanto pelo MCP, já que ambos compartilham o token) é **fine-grained**, com escopo **apenas em `efddrsn/capim-docs`** e permissão **`Issues: Read & Write`** — nada mais. Mesmo se um colega tentar usar o Claude pra:
+
+* commitar arquivo no repo,
+* criar branch,
+* abrir PR,
+* mexer em workflow / Actions,
+* ler ou escrever em outro repo,
+
+a chamada à API do GitHub vai falhar com 403/404 porque o PAT não tem escopo pra nada disso. E não há código no app/MCP que tente fazer essas operações — o único caminho de escrita exposto é `POST /repos/.../issues`.
+
+### Testar local
+
+```bash
+# health
+curl -i -H "Authorization: Bearer $MCP_BEARER_TOKEN" http://localhost:3000/mcp/health
+
+# tools/list
+curl -i -X POST http://localhost:3000/mcp \
+  -H "Authorization: Bearer $MCP_BEARER_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","method":"tools/list","id":1}'
+
+# tools/call
+curl -i -X POST http://localhost:3000/mcp \
+  -H "Authorization: Bearer $MCP_BEARER_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","method":"tools/call","id":2,"params":{"name":"list_guides","arguments":{}}}'
+```
 
 ## Adicionando guias novos
 

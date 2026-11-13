@@ -1,6 +1,6 @@
 # 🗂️ Resumo geral: 19 guias de suporte da Capim
 
-> Material para o time de suporte da Capim. Compilado em 12/05/2026.
+> Material para o time de suporte da Capim. Compilado em 12/05/2026. Atualizado em 13/11/2026.
 
 ## 1. Lista de guias entregues
 
@@ -14,7 +14,7 @@
 | 6 | Simulador de vendas | [`guia-suporte-simulador-vendas.md`](guia-suporte-simulador-vendas.md) |
 | 7 | Financiamento Capim (BNPL) | [`guia-suporte-financiamento-capim.md`](guia-suporte-financiamento-capim.md) |
 | 8 | Carnê Capim e Boleto tradicional | [`guia-suporte-carne-boleto.md`](guia-suporte-carne-boleto.md) |
-| 9 | Capix (microcrédito) | [`guia-suporte-capix.md`](guia-suporte-capix.md) |
+| 9 | Capix (Pix parcelado) | [`guia-suporte-capix.md`](guia-suporte-capix.md) |
 | 10 | Maquininha (POS, credenciamento, recebíveis, antecipação, saque, split) | [`guia-suporte-maquininha.md`](guia-suporte-maquininha.md) |
 | 11 | Controle financeiro (entradas, saídas, conciliação, comissões) | [`guia-suporte-controle-financeiro.md`](guia-suporte-controle-financeiro.md) |
 | 12 | Campanhas (Camila Connects) | [`guia-suporte-campanhas.md`](guia-suporte-campanhas.md) |
@@ -40,20 +40,20 @@
 
 5. **Vários fluxos críticos exigem ação manual da clínica e parecem automáticos.** BNPL: clínica precisa clicar "Solicitar pagamento" depois que o paciente assina (não é automático). Agendamento online: sininho do dashboard só dispara em status `confirmed`/`canceled`, e agendamentos do link entram como `pending`, então não avisa. Estoque: alertas só visuais passivos, sem push.
 
-6. **Capix no código é o oposto do briefing comum.** Não é empréstimo para a clínica, é parcelamento via Pix para o paciente (clínica recebe à vista com deságio). Importante alinhar antes do suporte responder.
+6. **Capix não é crédito.** Não é empréstimo para a clínica nem crédito para o paciente, e não pode ser chamado assim (regra de produto, Denis Maeda). É parcelamento via Pix para o paciente, com entrada que varia por proposta, e a clínica recebe à vista o valor em reais já calculado, sem percentual divulgado. No código do dash de novembro de 2026, a clínica já acompanha simulações, contratos e repasses no Portal Capix. Dúvidas e escalações de Capix vão para o Time de Riscos, não para o Time de Sustentação.
 
 7. **Central de Relacionamento não é CRM.** São dois pipelines fixos (Faltas e Desmarcados) com cards criados automaticamente quando um agendamento muda para `canceled` ou `attended: false`. Não dá pra criar card manual, não tem campos de valor/origem/responsável, não tem custom stages.
 
 8. **Vários botões "fazem outra coisa".** "Estornar Pix" da Maquininha só registra contato no HubSpot, não estorna. "Adicionar profissional" do split abre URL externa. "Lembretes de aniversário" abre iframe da Camila, não tela nativa. Saque sempre saca o saldo inteiro (input vem desabilitado, backend aceita parcial).
 
-9. **Muitos módulos têm versões em rollout simultaneamente** (Agenda V1 vs V2, BNPL V1 vs V2 unificado, Carnê tradicional vs reforma `PAYMENT_BOOK_REFORM_EXPERIMENT`, microcredits novo, fluxo de migração novo). O suporte precisa identificar qual versão a clínica está vendo pelo URL ou pelo print antes de responder.
+9. **Muitos módulos têm versões em rollout simultaneamente** (Agenda V1 vs V2, BNPL V1 vs V2 unificado, Carnê tradicional vs reforma `PAYMENT_BOOK_REFORM_EXPERIMENT`, Capix com fluxo novo e fluxo antigo do experimento Pix Automático, fluxo de migração novo). O suporte precisa identificar qual versão a clínica está vendo pelo URL ou pelo print antes de responder.
 
 ## 3. Top 5 perguntas críticas que aparecem em vários guias
 
 Estas perguntas se repetem em três ou mais guias e desbloqueiam o maior número de lacunas se respondidas:
 
-1. **Cronograma de GA de cada feature em rollout**: Agenda V2, BNPL V2, reforma do Carnê, microcredits novo, fluxo de migração novo. Quem é elegível hoje, como o suporte consulta se uma clínica específica está em qual versão.
-2. **SLA do Time de Sustentação por nível de severidade.** Aparece em todos os 19 guias.
+1. **Cronograma de GA de cada feature em rollout**: Agenda V2, BNPL V2, reforma do Carnê, fluxo novo do Capix, fluxo de migração novo. Quem é elegível hoje, como o suporte consulta se uma clínica específica está em qual versão.
+2. **SLA do Time de Sustentação por nível de severidade.** Aparece em quase todos os guias (no Capix, quem atende é o Time de Riscos).
 3. **Processo de engenharia documentado para "desfazer" ações irreversíveis**: agendamento cancelado, orçamento aprovado por engano, prótese deletada, lembrete de aniversário apagado, contrato BNPL no estado errado. Cada guia abre uma lacuna pedindo o mesmo canal.
 4. **Mapa de gating por plano comercial**: BNPL, Camila, Campanhas, Carnê CaaS, Capix, Financeiro avançado, Agendamento online. Quem tem direito ao quê no plano X, Y, Z.
 5. **Endereço atual oficial das integrações Camila e Metabase** (URLs, dashboards específicos por clínica/rede, fonte oficial pra o suporte conferir saúde). Aparece quando alguma das telas-iframe quebra.
@@ -68,7 +68,7 @@ Antes de publicar os guias internamente para o suporte, recomendado validar nest
 
 3. **Permissões e papéis em cada módulo.** Pacientes, Agenda, Maquininha, Financeiro. Confirmar oficialmente o regime real (não só o que o frontend mostra; backend pode aplicar restrição diferente).
 
-4. **Status de rollout das versões V2 e experimentos.** Validar com Produto qual versão é canônica hoje em cada módulo (Agenda, BNPL, Carnê, Microcredits, Migração) e como o suporte consulta se uma clínica está em qual.
+4. **Status de rollout das versões V2 e experimentos.** Validar com Produto qual versão é canônica hoje em cada módulo (Agenda, BNPL, Carnê, Capix, Migração) e como o suporte consulta se uma clínica está em qual.
 
 5. **Prints e telas.** Cada guia tem placeholders `[INSERIR PRINT: …]` na seção 8. Anexar capturas oficiais antes de publicar. Pode rodar via screenshot automatizado em staging, ou pedido manual ao time.
 

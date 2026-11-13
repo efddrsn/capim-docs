@@ -1,6 +1,6 @@
 # 📘 Guia de Suporte: Documentos
 
-> Material para o time de suporte da Capim. Atualizado em 12/05/2026.
+> Material para o time de suporte da Capim. Atualizado em 13/11/2026.
 > Status da feature: GA. O módulo está disponível para todas as clínicas, sem gating de plano. ✅ Validar.
 
 ## 1. 🎯 Visão geral
@@ -55,6 +55,14 @@ Existem ainda dois tipos que **aparecem na listagem mas são gerados por outros 
 4. Preencher quantidade, unidade de medida e posologia. Salvar o item.
 5. Repetir para cada medicamento. A lista aparece na tela.
 6. **"Gerar receituário"** cria a prescrição. Se houver mistura de medicamentos comuns e controlados, o sistema separa em duas folhas no PDF (uma de receita comum, outra de receita especial).
+
+**Receita pela Memed (em breve):** a criação de receitas vai contar com a opção de fazer a receita pela **Memed**, que tem base de medicamentos sempre atualizada e gera receita com **QR Code** aceito nas farmácias. A tela já está pronta no sistema, mas só aparece quando a Capim liberar a funcionalidade (flag `FF_MEMED_ENABLED`, ligada para o sistema inteiro, não por clínica). Quando estiver liberada, o fluxo muda assim:
+
+1. "+ Novo" → "Documentos" → "Receituário" abre a pergunta **"Como deseja criar esta receita?"** com duas opções:
+   * **Receita Memed** (marcada como "Recomendado"): "Crie receitas atualizadas com QR Code para farmácias."
+   * **Receita Capim**: o receituário atual descrito acima. Ao escolher essa opção, aparece o aviso de que ela será descontinuada em breve e que novas receitas deverão ser criadas pela Memed, com aviso prévio antes da mudança.
+2. Na Receita Memed, a tela pede os **dados da receita**: paciente, dentista responsável e os dados profissionais do dentista (CPF, data de nascimento, número e UF do CRO).
+3. A receita é montada dentro da janela da Memed, embarcada no dashboard. Depois de salva, aparece na tabela de Documentos como "Receita Memed".
 
 **Fluxo típico (gerar atestado / nota do dentista):**
 
@@ -162,6 +170,14 @@ R: Pelo modal de envio para assinatura, **a interface oferece apenas "WhatsApp" 
 
 R: O checkbox **"Cabeçalho padrão"** no formulário inclui o cabeçalho da clínica (logo + nome + dados de contato) no topo do PDF gerado. O logo e os dados vêm da configuração da clínica em Configurações → Clínica. Se a clínica não tem logo cadastrado, o cabeçalho sai só com texto.
 
+**P: A clínica ouviu falar de receita pela Memed. Já dá pra usar?**
+
+R: Ainda não para todos. A opção **Receita Memed** chega em breve: a base de medicamentos é a da Memed (sempre atualizada) e a receita sai com QR Code que as farmácias leem. A tela já existe no sistema, mas fica escondida até a Capim ligar a funcionalidade. Enquanto isso, o caminho é o receituário da Capim. Quando estiver liberada, ao clicar em Receituário a clínica escolhe entre "Receita Memed" e "Receita Capim".
+
+**P: Ao tentar usar a Memed aparece "Seu cadastro profissional está incompleto". O que fazer?**
+
+R: A Memed exige **CRO e CPF** do dentista. Completar o cadastro profissional do dentista (CPF, número e UF do CRO) e tentar de novo. Outras mensagens possíveis: "Não foi possível autenticar com a MEMED" (tentar de novo e, se persistir, escalar) e "Erro ao carregar a plataforma MEMED. Verifique sua conexão." (problema de internet ou bloqueio do navegador).
+
 **P: A lista padrão de medicamentos da Capim vem habilitada?**
 
 R: Depende da configuração da clínica em **Configurações → Receituário**. O toggle `standard_medicines_included` decide se o seletor de medicamentos mostra a lista pré-cadastrada da Capim ou apenas os medicamentos que a clínica cadastrou. 🚧 PENDENTE: confirmar o default (vem ligado ou desligado para clínicas novas?).
@@ -179,6 +195,7 @@ R: Depende da configuração da clínica em **Configurações → Receituário**
 | "Status virou 'Erro na assinatura'." | Falha na geração do pacote de assinatura (provedor externo ou problema de dados do assinante). | Clicar no botão de envio (ícone de alerta) abre o fluxo de tentar de novo. Para sick note e prescription, o backend usa `update`; para custom, recria. Se na segunda tentativa funcionar, ok. | Se persistir, escalar com ID do documento, tipo, e print do erro. |
 | "O paciente assinou pelo link mas a clínica continua vendo 'Aguardando'." | Webhook do provedor de assinatura demorou, ou só um de dois assinantes assinou (status `partiallySigned`). | Conferir na coluna "Assinantes" se aparece o ícone de check para cada assinante. Se for `partiallySigned`, está esperando o segundo. Pedir F5 / esperar alguns minutos. | Se passou tempo e está claro que todos assinaram mas o status não muda, escalar. |
 | "Não consigo deletar o modelo." | Modelo é padrão da Capim (`default: true`). | Explicar que modelos padrão não são deletáveis pela tela. Sugerir criar uma cópia editada como novo modelo da clínica. | Não escalar (comportamento esperado). |
+| "Não consigo abrir a receita Memed / dá erro de cadastro." | Funcionalidade ainda não liberada, ou dentista sem CRO e CPF completos, ou falha de autenticação com a Memed. | Confirmar se a clínica vê a opção "Receita Memed" (se não vê, ainda não foi liberada). Se vê, completar CPF e CRO do dentista e tentar de novo. | Se o cadastro está completo e aparece "Não foi possível autenticar com a MEMED" ou erro ao salvar, escalar com ID da clínica, dentista e print da mensagem. |
 | "Atestado/Receituário sumiu da lista mas eu queria de volta." | Foi feito `discard!` (soft delete). | Explicar que pela interface não há "lixeira" / restaurar. Gerar de novo é o caminho prático. Se for crítico (foi assinado e perdido), pedir reativação para a engenharia (registro fica no banco). | Escalar pra eng com ID do documento se a clínica precisar restaurar. |
 
 **Para quem escalar:** **Time de Sustentação** (interno Capim). Bug de geração de PDF, falha de assinatura digital, restauração de documento deletado: todos entram por esse canal.
@@ -198,6 +215,7 @@ R: Depende da configuração da clínica em **Configurações → Receituário**
 
 ## > 7. 🗺️ Próximos passos [opcional]
 
+* **Receita pela Memed:** criação de receitas com base de medicamentos atualizada da Memed e QR Code nas farmácias (Alan Martins, issue #14). A tela já está no sistema, escondida atrás da flag `FF_MEMED_ENABLED`. Quando liberada, a "Receita Capim" passa a mostrar aviso de descontinuação. 🚧 PENDENTE: data de liberação.
 * Edição de documento já gerado (hoje é deletar e refazer). 🚧 PENDENTE: confirmar se está no roadmap.
 * Envio por e-mail no fluxo de assinatura. 🚧 PENDENTE.
 * Suporte a assinatura digital de mais tipos (anamnese tem caminho próprio; orçamento idem). 🚧 PENDENTE: clareza de unificação.
@@ -224,6 +242,8 @@ R: Depende da configuração da clínica em **Configurações → Receituário**
 
 [INSERIR PRINT: Configurações → Receituário com o toggle "Incluir lista padrão de medicamentos"]
 
+[INSERIR PRINT: modal "Como deseja criar esta receita?" com as opções Receita Memed e Receita Capim (quando liberado)]
+
 ***
 
 ## > 🚧 Lacunas (preencher antes de publicar)
@@ -242,6 +262,11 @@ R: Depende da configuração da clínica em **Configurações → Receituário**
 **Envio**
 * [ ] Existe envio por e-mail em algum canto do fluxo de assinatura, ou é só WhatsApp/link?
 * [ ] Mensagem padrão enviada por WhatsApp pelo botão "Enviar pelo WhatsApp" é configurável pela clínica?
+
+**Memed**
+* [ ] Quando a Receita Memed será liberada (flag `FF_MEMED_ENABLED` ligada em produção)? Vale para todas as clínicas de uma vez?
+* [ ] Quando a Receita Capim deixa de existir, e o que acontece com as receitas Capim já emitidas?
+* [ ] A Receita Memed tem custo para a clínica ou exige conta na Memed?
 
 **Operação e correção**
 * [ ] Canal oficial para o suporte pedir restauração de documento deletado (sick note, prescription, custom).

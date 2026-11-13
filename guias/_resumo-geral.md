@@ -14,7 +14,7 @@
 | 6 | Simulador de vendas | [`guia-suporte-simulador-vendas.md`](guia-suporte-simulador-vendas.md) |
 | 7 | Financiamento Capim (BNPL) | [`guia-suporte-financiamento-capim.md`](guia-suporte-financiamento-capim.md) |
 | 8 | Carnê Capim e Boleto tradicional | [`guia-suporte-carne-boleto.md`](guia-suporte-carne-boleto.md) |
-| 9 | Capix (microcrédito) | [`guia-suporte-capix.md`](guia-suporte-capix.md) |
+| 9 | Capix (parcelamento via Pix) | [`guia-suporte-capix.md`](guia-suporte-capix.md) |
 | 10 | Maquininha (POS, credenciamento, recebíveis, antecipação, saque, split) | [`guia-suporte-maquininha.md`](guia-suporte-maquininha.md) |
 | 11 | Controle financeiro (entradas, saídas, conciliação, comissões) | [`guia-suporte-controle-financeiro.md`](guia-suporte-controle-financeiro.md) |
 | 12 | Campanhas (Camila Connects) | [`guia-suporte-campanhas.md`](guia-suporte-campanhas.md) |

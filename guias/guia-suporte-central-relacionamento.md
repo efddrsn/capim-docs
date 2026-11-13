@@ -1,6 +1,6 @@
 # 📘 Guia de Suporte: Central de Relacionamento
 
-> Material para o time de suporte da Capim. Atualizado em 12/05/2026.
+> Material para o time de suporte da Capim. Atualizado em 13/11/2026.
 > Status da feature: GA, controlada por feature flag `FF_DEALS_ENABLED` no backend (sem flag, os deals nem são criados automaticamente). 🚧 PENDENTE: confirmar se essa flag está hoje em 100% das clínicas ou se ainda há gating por clínica.
 
 ## 1. 🎯 Visão geral
@@ -78,7 +78,7 @@ Tentar arrastar pra uma coluna não permitida: o drag não conclui, o card volta
 **Filtros disponíveis na visão de pipeline:**
 
 * **Por paciente**: campo de busca no topo da tela do pipeline (selecionar paciente já cadastrado).
-* **Período padrão fixo**: o frontend pede sempre os últimos 14 dias retroativos + 14 dias à frente (no pipeline de Desmarcados) ou últimos 14 dias até hoje (no pipeline de Faltas). **A clínica não tem seletor de período na tela**. ✅ Validar com produto se essa janela é fixa por design ou se é evolução pendente.
+* **Período padrão fixo**: o frontend pede sempre os últimos 14 dias retroativos + 14 dias à frente (no pipeline de Desmarcados) ou últimos 14 dias até hoje (no pipeline de Faltas). **A clínica não tem seletor de período na tela**. Pelo que o time lembra, a janela fixa veio de algum empecilho técnico na época, mas isso não foi confirmado (as pessoas envolvidas já não estão na Capim). Ainda vale validar com produto se é design ou evolução pendente.
 * **Não há filtro** por dentista, por origem do agendamento, por responsável pela recuperação, por estágio.
 
 **⚠️ Atenção:**
@@ -205,7 +205,7 @@ R: **Não existe hoje.** O modelo de dados do card tem só: paciente, dentista, 
 * [ ] Quando o agendamento original é restaurado por engenharia (reativado), o card existente é descartado automaticamente? (Pelo código, sim: `DiscardOriginatedDeal` roda quando o time_slot deixa de estar cancelado, mas validar na prática.)
 
 **Filtros e visões**
-* [ ] A janela de período (14 dias retroativos + 14 à frente) é por design ou é evolução pendente?
+* [ ] A janela de período (14 dias retroativos + 14 à frente) é por design ou é evolução pendente? Resposta parcial: provavelmente foi um empecilho técnico na época, sem confirmação, porque as pessoas envolvidas saíram da Capim (Alan Martins, #10). Segue aberta para produto/eng.
 * [ ] Há previsão de filtro por dentista, por responsável, ou por estágio?
 
 **Customização**

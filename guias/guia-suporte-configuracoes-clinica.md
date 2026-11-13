@@ -1,6 +1,6 @@
 # 📘 Guia de Suporte: Configurações da clínica (estruturais)
 
-> Material para o time de suporte da Capim. Atualizado em 12/05/2026.
+> Material para o time de suporte da Capim. Atualizado em 13/11/2026.
 > Status da feature: GA. Cobre os ajustes "estruturais" da clínica em Configurações: dados cadastrais, usuários e papéis, procedimentos e migração de dados. Configurações de agenda, disponibilidade e notificações estão em guia separado. Configurações de documentos, prescrições, anamnese e maquininhas de cartão também estão em guias separados.
 
 ## 1. 🎯 Visão geral
@@ -70,7 +70,7 @@ Resolve três dores: clínica que assinou e não sabe por onde começar (migraç
 
 1. Vai em Configurações → Procedimentos → botão "+ Novo procedimento". Abre uma gaveta lateral.
 2. Preenche **nome** do procedimento (campo obrigatório), **valor base** (preço sugerido), **especialidade** e **plano de saúde** vinculado (opcional, da lista de planos cadastrados).
-3. ⚠️ "Plan name" e "Specialty name" são strings livres no backend, não vinculadas a uma tabela mestre de especialidades. Cada clínica cria a própria nomenclatura. 🚧 PENDENTE confirmar se a UI restringe a lista ou aceita texto livre.
+3. ⚠️ "Plan name" e "Specialty name" são strings livres no backend, não vinculadas a uma tabela mestre de especialidades. Cada clínica cria a própria nomenclatura. **A UI aceita texto livre se necessário** (não fica presa a uma lista pré-cadastrada).
 4. Salva. O procedimento entra no catálogo da clínica e fica disponível em Agendamento, Orçamento e Evolução.
 5. Editar: clicar no procedimento na tabela. Excluir: ícone de lixeira, com confirmação. Exclusão é soft delete (`discard`).
 6. Busca por nome no campo do topo, com debounce. Paginação na tabela.
@@ -187,7 +187,7 @@ R: Boletos e documentos são gerados no momento da emissão e ficam imutáveis d
 * **Pacientes é módulo obrigatório na migração.** Não dá pra migrar só "outras coisas" sem migrar pacientes.
 * **Lista de softwares anteriores na migração é fixa** (Simples Dental, Dontus, Clinicorp, Dental Office, Controle Odonto, Outros). Software fora da lista cai em "Outros" e o tratamento passa a ser manual.
 * **Fluxo de migração interno (mais direto) só está disponível pra Simples Dental hoje**, e ainda atrás da flag `FF_NEW_MIGRATION_FLOW`. ✅ Validar status atual da flag.
-* **Especialidade e plano em Procedimentos podem ser texto livre** no backend. Padronização depende da disciplina da clínica.
+* **Especialidade e plano em Procedimentos aceitam texto livre**, no backend e na UI. Padronização depende da disciplina da clínica.
 
 ## > 7. 🗺️ Próximos passos [opcional]
 
@@ -242,7 +242,7 @@ R: Boletos e documentos são gerados no momento da emissão e ficam imutáveis d
 
 **Procedimentos**
 
-* [ ] A UI restringe especialidade e plano a uma lista pré-cadastrada, ou aceita texto livre?
+* [x] A UI restringe especialidade e plano a uma lista pré-cadastrada, ou aceita texto livre? ✅ Aceita texto livre se necessário (Alan Martins, #13)
 * [ ] Existe importação em massa de procedimentos via planilha pela UI?
 * [ ] Há filtro por especialidade ou plano de saúde exposto na tela de Procedimentos?
 

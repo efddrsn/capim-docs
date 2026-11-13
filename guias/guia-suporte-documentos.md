@@ -1,6 +1,6 @@
 # 📘 Guia de Suporte: Documentos
 
-> Material para o time de suporte da Capim. Atualizado em 12/05/2026.
+> Material para o time de suporte da Capim. Atualizado em 13/11/2026.
 > Status da feature: GA. O módulo está disponível para todas as clínicas, sem gating de plano. ✅ Validar.
 
 ## 1. 🎯 Visão geral
@@ -201,6 +201,7 @@ R: Depende da configuração da clínica em **Configurações → Receituário**
 * Edição de documento já gerado (hoje é deletar e refazer). 🚧 PENDENTE: confirmar se está no roadmap.
 * Envio por e-mail no fluxo de assinatura. 🚧 PENDENTE.
 * Suporte a assinatura digital de mais tipos (anamnese tem caminho próprio; orçamento idem). 🚧 PENDENTE: clareza de unificação.
+* **Receitas via Memed (em breve):** a criação de receitas vai contar com a opção via Memed, que traz um banco de dados de medicamentos 100% atualizado e permite apresentar a receita na farmácia por QR code (Alan Martins, #14). 🚧 PENDENTE: data de lançamento e se vale para todas as clínicas.
 
 ## > 8. 🖼️ Telas e fluxos
 

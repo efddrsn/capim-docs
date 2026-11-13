@@ -1,6 +1,6 @@
 # 📘 Guia de Suporte: Agenda
 
-> Material para o time de suporte da Capim. Atualizado em 12/05/2026.
+> Material para o time de suporte da Capim. Atualizado em 13/11/2026.
 > Status da feature: GA na versão V1, com a V2 em rollout controlado por whitelist de clínicas (🚧 PENDENTE: confirmar percentual atual e data de GA da V2).
 
 ## 1. 🎯 Visão geral
@@ -27,10 +27,19 @@ Resolve três dores clássicas da clínica: confusão com remarcação, esquecim
 
 * Menu lateral → Atendimento → Agenda.
 * URL típica: `/#/schedule` (V1) ou `/#/schedule_v2` (V2, para clínicas habilitadas).
+* Atalho em qualquer tela: botão de **ações rápidas** na barra superior (topbar) do sistema, que cria um agendamento ou um bloqueio sem precisar abrir a Agenda.
+
+**O que muda na Agenda V2 (para clínicas habilitadas):**
+
+* **Visualização por cadeiras:** além da visão por dentista, a agenda passa a contar com visualização por cadeira.
+* **Filtros no topo:** o filtro por dentista fica na parte superior (header da agenda), e não mais no painel lateral. Dá pra filtrar por **dentistas, cadeiras e status do atendimento**.
+* **Tag da Camila:** nos detalhes do agendamento, uma tag ao lado do título do evento indica que ele foi marcado pela Camila.
+* **Aniversariantes:** não aparecem mais no miolo da agenda. Há um botão específico ao lado do dia para ver os aniversariantes daquela data.
+* **Feriados:** a V2 traz o cadastro de feriados estaduais e municipais nos ajustes da agenda, cada tipo com uma cor (Nacional verde, Estadual azul, Municipal amarelo). O passo a passo fica no guia de Configurações da agenda.
 
 **Fluxo típico (criar agendamento manualmente):**
 
-1. A recepcionista clica em "Novo agendamento" (no topo, no botão azul, ou clica direto no horário desejado no grid).
+1. A recepcionista clica em "Novo agendamento" (no topo, no botão azul, ou clica direto no horário desejado no grid). Também dá pra criar pelo botão de ações rápidas da topbar, de qualquer tela do sistema.
 2. Abre uma gaveta lateral com o formulário. Ela escolhe o tipo: agendamento ou bloqueio de horário.
 3. Para agendamento: busca o paciente pelo nome ou cria um paciente novo na hora.
 4. Seleciona dentista, data, hora de início e fim (ou marca "dia inteiro"), define status (Confirmado, Pendente ou Cancelado), pode anexar procedimentos e adicionar observação.
@@ -80,7 +89,7 @@ Resolve três dores clássicas da clínica: confusão com remarcação, esquecim
 * **Caso 3, paciente liga pedindo pra remarcar:** recepção localiza o agendamento (consegue buscar por nome via lupa em V2), arrasta pra novo horário (ou clica e edita), confirma notificação ao paciente. O paciente recebe aviso do novo horário.
 * **Caso 4, tratamento de ortodontia com 12 visitas:** recepção marca a primeira consulta, ativa recorrência mensal por 12 meses. Todas as visitas aparecem na agenda. Se precisar reagendar uma, o sistema pergunta se é só aquela ou a série toda.
 * **Caso 5, paciente marcou sozinho pelo link público:** o agendamento aparece na agenda do dentista, normalmente com status "Pendente". A recepção valida (confirma ou ajusta horário) e muda o status pra "Confirmado".
-* **Caso 6, Camila marcou pelo WhatsApp:** a Camila cria o agendamento direto via API e ele aparece na agenda como qualquer outro. O backend grava a origem (`created_by: artificial_intelligence`), mas **a tela hoje não diferencia visualmente** agendamentos da Camila dos manuais. Se a clínica perguntar "qual foi marcado pela Camila?", a resposta honesta é que a interface não mostra hoje.
+* **Caso 6, Camila marcou pelo WhatsApp:** a Camila cria o agendamento direto via API e ele aparece na agenda como qualquer outro. O backend grava a origem (`created_by: artificial_intelligence`). **Na V1, a tela não diferencia visualmente** agendamentos da Camila dos manuais. **Na V2, existe uma tag ao lado do título do evento, dentro dos detalhes do agendamento**, indicando que foi marcado pela Camila. Se a clínica perguntar "qual foi marcado pela Camila?", a resposta depende da versão que ela usa.
 
 ## > 4. ❓ FAQ
 
@@ -102,7 +111,15 @@ R: Botões no topo da agenda. Em V1 e V2 funciona igual: Dia, Semana, Mês, Agen
 
 **P: Como filtrar por dentista quando a clínica tem vários?**
 
-R: No painel lateral da agenda, há lista de dentistas com checkbox. Só os marcados aparecem no grid. Aniversários e feriados aparecem sempre.
+R: Depende da versão. Na V1, no painel lateral da agenda, há lista de dentistas com checkbox: só os marcados aparecem no grid, e aniversários e feriados aparecem sempre. Na V2, o filtro por dentista fica na parte superior (header da agenda), junto com os filtros por cadeira e por status do atendimento.
+
+**P: Onde vejo os aniversariantes do dia?**
+
+R: Na V1, eles aparecem no próprio grid da agenda. Na V2, não aparecem mais no miolo da agenda: há um botão específico ao lado do dia para visualizar os aniversariantes daquela data.
+
+**P: Dá pra saber quais agendamentos foram marcados pela Camila?**
+
+R: Na V2, sim: abra os detalhes do agendamento e veja a tag ao lado do título do evento. Na V1, a tela não mostra essa diferença.
 
 **P: A recepcionista arrastou um agendamento e nada aconteceu. Por quê?**
 
@@ -149,7 +166,7 @@ R: Sim. Cada agendamento tem um marcador separado de "Compareceu" e "Não compar
 * O **paciente vinculado a um agendamento não pode ser trocado** pela interface depois de criado. Solução: cancelar e recriar.
 * **Reverter cancelamento pela interface não existe.** Engenharia consegue reativar internamente, mas não tem botão na tela.
 * **Sem rollback automático em falhas parciais** de operações em massa (ex: deletar uma série recorrente inteira). Se algo falhar no meio, pode ficar inconsistente.
-* **Sem filtro por sala ou ponto de venda na agenda.** Filtros disponíveis hoje na API: dentista, status, intervalo de datas. Não existe filtro por procedimento ou sala.
+* **Sem filtro por sala ou ponto de venda na V1.** Filtros disponíveis na API: dentista, status, intervalo de datas. Não existe filtro por procedimento. Na V2, a agenda ganha visualização e filtro por cadeira, além de dentista e status do atendimento.
 * **Sincronização da agenda do dentista com agendamentos vindos do link público pode atrasar** alguns segundos: pode precisar recarregar.
 * **Notificação ao paciente é só por WhatsApp.** Não existe envio por SMS nem por e-mail. Os horários dos lembretes (1h e 24h antes da consulta) são fixos, não configuráveis pela clínica.
 * **Sem alerta automático de notificação falhada.** Existe a tela de notificações falhadas (últimos 7 dias) para a clínica consultar, mas nada chama a atenção do usuário quando uma falha acontece.
@@ -159,7 +176,7 @@ R: Sim. Cada agendamento tem um marcador separado de "Compareceu" e "Não compar
 
 * Rollout da V2 expandindo para mais clínicas. 🚧 PENDENTE: quando vira GA e some a V1?
 * Reforma do boleto (Carnê) integrada à agenda (paciente que marcou já recebe boleto na hora). 🚧 PENDENTE: confirmar status.
-* Evolução da integração com a Central da Camila, possivelmente com marcação visual na agenda. 🚧 PENDENTE.
+* Evolução da integração com a Central da Camila. A marcação visual já existe na V2 (tag nos detalhes do agendamento).
 
 ## > 8. 🖼️ Telas e fluxos
 
@@ -177,7 +194,15 @@ R: Sim. Cada agendamento tem um marcador separado de "Compareceu" e "Não compar
 
 [INSERIR PRINT: modal de cancelamento com checkbox "Notificar paciente"]
 
-[INSERIR PRINT: filtro de dentistas na sidebar]
+[INSERIR PRINT: filtro de dentistas na sidebar (V1)]
+
+[INSERIR PRINT: filtros no header da agenda V2 (dentistas, cadeiras, status)]
+
+[INSERIR PRINT: tag da Camila nos detalhes do agendamento (V2)]
+
+[INSERIR PRINT: botão de aniversariantes ao lado do dia (V2)]
+
+[INSERIR PRINT: botão de ações rápidas na topbar]
 
 [INSERIR PRINT: tela do link público de agendamento online vista pelo paciente]
 
@@ -218,10 +243,10 @@ Fact-check feito contra `capim-dash-backend`, podem ser tratados como confirmado
 
 * Cancelamento muda status para "Cancelado", não apaga; existe transição interna para reativar via engenharia.
 * Lembretes automáticos saem em horários fixos (1h e 24h antes), via WhatsApp, sem configuração por clínica.
-* Não há filtro por sala/procedimento na API; só dentista, status e datas.
+* Não há filtro por sala/procedimento na API; só dentista, status e datas. (A V2 adiciona visualização e filtro por cadeira na interface; Alan Martins, #11.)
 * Não há gating de plano para a Agenda.
 * Por padrão, dentistas só veem a própria agenda; ver/editar agendas de outros depende de features `show_all_schedules` e `edit_all_schedules` ativas.
 * Existe endpoint/tela de notificações falhadas dos últimos 7 dias com opção de reenvio.
-* Agendamentos da Camila têm `created_by: artificial_intelligence` no backend, mas a UI hoje não diferencia.
+* Agendamentos da Camila têm `created_by: artificial_intelligence` no backend. A V1 não diferencia na UI; a V2 mostra uma tag nos detalhes do agendamento (Alan Martins, #11).
 * Drag-and-drop funciona em V1 e V2.
 * Auto-agendamento via link público entra como "Pendente".

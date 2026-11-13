@@ -1,6 +1,6 @@
 # 📘 Guia de Suporte: Pacientes
 
-> Material para o time de suporte da Capim. Atualizado em 12/05/2026.
+> Material para o time de suporte da Capim. Atualizado em 13/11/2026.
 > Status da feature: GA. A aba **Financeiro do paciente** está em rollout controlado por feature flag (`access-patient-financial-operations`) e a tela de **Procedimentos** tem um experimento ativo em algumas clínicas (reforma do Carnê de Pagamento). 🚧 PENDENTE: confirmar como o suporte checa se uma clínica está no experimento.
 
 ## 1. 🎯 Visão geral
@@ -50,7 +50,7 @@ A ficha tem um cabeçalho com foto, nome, idade, contatos e botões de "Enviar m
 
 1. **Procedimentos**: lista de procedimentos planejados e executados, com dente/face, status (planejado, em andamento, concluído), valor, dentista responsável, observações e comissões. Permite criar procedimento novo, marcar como executado (com data), editar e excluir. Existe um experimento de "reforma do Carnê" rodando em algumas clínicas: nesse experimento, a tela de procedimentos é diferente (componente `IndexViewExperiment.vue`). 🚧 PENDENTE: confirmar com produto que clínicas estão no experimento.
 2. **Anamnese**: lista de anamneses preenchidas para o paciente. Cada anamnese tem status e versão (existe uma flag `FF_NEW_ANAMNESIS_ENABLED` que troca o layout entre tabela antiga e cartões da V2). Permite criar nova (a partir de um template definido pela clínica), duplicar uma anterior, editar, excluir, baixar PDF (assinado ou não) e enviar pro paciente assinar pelo celular.
-3. **Evoluções**: anotações cronológicas do que aconteceu em cada atendimento. Texto livre, vinculado ao usuário (dentista) que registrou. Permite criar, editar, excluir e imprimir (rota dedicada `/patients/:id/evolutions/:evolutionId`).
+3. **Evoluções**: anotações cronológicas do que aconteceu em cada atendimento. Texto livre, vinculado ao usuário (dentista) que registrou. Permite criar, excluir e imprimir (rota dedicada `/patients/:id/evolutions/:evolutionId`). **Edição só enquanto a evolução é rascunho:** depois de salva, não pode mais ser editada, porque a evolução tem valor jurídico (Alan Martins, #27).
 4. **Orçamentos**: lista de orçamentos do paciente (escopo do módulo de Orçamentos, este guia só aponta). Permite criar, editar, ver procedimentos, ver pagamentos e ver resumo.
 5. **Financeiro** *(só aparece se a feature `access-patient-financial-operations` estiver ativa)*: visão financeira do paciente, com lançamentos por orçamento ou por procedimento (botão de alternar quando a flag `FF_PATIENT_COMPLETE_FINANCIAL` está desligada; quando está ligada, mostra uma visão consolidada única). Tem filtros e botão "+ Novo lançamento".
 6. **Documentos**: lista os documentos vinculados ao paciente (atestados, receitas, anamneses assinadas, documentos customizados). Há atualização em tempo real via WebSocket quando uma assinatura é concluída.
@@ -59,7 +59,7 @@ A ficha tem um cabeçalho com foto, nome, idade, contatos e botões de "Enviar m
 
 **Edição da ficha:**
 
-* O botão "Editar" leva pro formulário completo. Quase tudo pode ser alterado. Exceção visual: **se o paciente já tem CPF preenchido, o campo CPF fica desabilitado** (não dá pra trocar pela tela). O backend até aceita, mas o input vem com `disabled` quando já tem valor.
+* O botão "Editar" leva pro formulário completo. Quase tudo pode ser alterado, **inclusive o CPF de um paciente que já tinha CPF cadastrado** (testado na clínica interna 62; Alan Martins, #25).
 
 **⚠️ Atenção:**
 
@@ -77,7 +77,7 @@ A ficha tem um cabeçalho com foto, nome, idade, contatos e botões de "Enviar m
 * **Caso 4, atestado e receita:** depois do atendimento, dentista entra na ficha → aba "Documentos" ou pelo botão direto "Receita" / "Atestado", preenche, manda pra assinatura digital, paciente assina pelo celular. O documento volta pra aba "Documentos" com status atualizado em tempo real (WebSocket).
 * **Caso 5, recepção cadastra paciente novo pela Agenda:** abre Agenda, clica em horário vazio, cria agendamento e o paciente é cadastrado "na hora" pelo mesmo formulário. A ficha já nasce com `creation_source: calendar`.
 * **Caso 6, clínica precisa apagar paciente teste:** recepção entra na lista, seleciona um ou vários pacientes, clica em "Excluir selecionados", confirma. O paciente some das listas mas permanece soft-deleted no banco.
-* **Caso 7, paciente criado pela Camila:** quando a Camila marca pelo WhatsApp e o paciente é novo, a ficha nasce com `creation_source: artificial_intelligence`. Hoje a tela **não diferencia visualmente** pacientes criados pela Camila dos demais. ✅ Validar
+* **Caso 7, paciente criado pela Camila:** quando a Camila marca pelo WhatsApp e o paciente é novo, a ficha nasce com `creation_source: artificial_intelligence`. A tela **não diferencia visualmente** pacientes criados pela Camila ou pelo link público dos demais: todos são exibidos da mesma maneira (Alan Martins, #26).
 
 ## > 4. ❓ FAQ
 
@@ -85,9 +85,13 @@ A ficha tem um cabeçalho com foto, nome, idade, contatos e botões de "Enviar m
 
 R: Primeiro, confirmar a grafia exata (a busca é fuzzy em nome/CPF/telefone/ID do prontuário, mas erro grosseiro de digitação pode não casar). Segundo, **conferir se o paciente está com `discarded_at` preenchido** (foi excluído): nesse caso ele some das listas e da busca, e o caminho é pedir restauração pela engenharia. Terceiro, conferir se o paciente foi criado em outra clínica (usuário multi-clínica pode estar na clínica errada).
 
-**P: Por que o campo CPF aparece travado quando eu vou editar um paciente?**
+**P: Dá pra corrigir o CPF de um paciente que já tinha CPF cadastrado?**
 
-R: Por design da tela: quando o paciente já tem CPF cadastrado, o input vem desabilitado pra evitar troca acidental. O backend aceita atualizar, mas a UI bloqueia. Se a clínica precisa corrigir um CPF errado, o caminho hoje é escalar pra engenharia. ✅ Validar
+R: Sim. Basta clicar em "Editar" na ficha, corrigir o CPF e salvar. Foi testado na clínica interna (62) e a edição funcionou (Alan Martins, #25). Se o campo aparecer travado pra alguma clínica, coletar print e ID da clínica e escalar.
+
+**P: A dentista quer corrigir uma evolução que já salvou. Dá?**
+
+R: Não. A evolução só pode ser editada enquanto está como rascunho. Depois de salva, a edição não é permitida porque o documento tem valor jurídico, como um prontuário de papel assinado (Alan Martins, #27).
 
 **P: A clínica tem dois cadastros pro mesmo paciente. Como mesclar?**
 
@@ -131,7 +135,8 @@ R: Na aba **Financeiro** dentro da ficha (se a feature estiver ativa). Tem visã
 |---|---|---|---|
 | "Não acho o paciente na busca, mas tenho certeza que cadastrei." | Paciente foi excluído (soft delete) e sumiu das listas; ou está em outra clínica (multi-clínica); ou erro de digitação no termo de busca. | Pedir ID da clínica e nome/CPF do paciente. Confirmar a clínica correta. Pedir pra tentar buscar pelo CPF cru ou pelo telefone. Se nada acha, suspeitar de exclusão. | Se confirmado que foi excluído por engano, escalar pra eng com ID do paciente pedindo restauração. |
 | "Quero juntar dois cadastros do mesmo paciente." | Não existe função de mesclar duplicidades na UI. | Orientar a clínica a copiar dados manualmente pro cadastro que ficará e excluir o duplicado. Se houver muito histórico nos dois, recomendar escalonamento. | Escalar pra eng quando há procedimentos, orçamentos ou documentos relevantes nos dois cadastros e a clínica não consegue tratar manualmente. |
-| "Não consigo trocar o CPF do paciente, o campo está travado." | UI desabilita o campo CPF quando já tem valor cadastrado. | Confirmar a expectativa: hoje, paciente com CPF preenchido não tem como alterar pela tela. | Escalar pra eng com ID do paciente quando a correção é necessária (ex: CPF do paciente foi digitado errado e está bloqueando emissão de documento). |
+| "Não consigo trocar o CPF do paciente." | Esperado que funcione: CPF já cadastrado é editável pela tela "Editar" (Alan Martins, #25). | Orientar o passo a passo: ficha do paciente, "Editar", corrigir CPF, salvar. | Se o campo estiver travado ou não salvar, escalar pra eng com ID do paciente e print. |
+| "Não consigo editar uma evolução." | Evolução já foi salva; só rascunho é editável, por ter valor jurídico (#27). | Explicar a regra (evolução salva é documento com valor jurídico). | Não escala, é comportamento esperado. |
 | "Excluí um paciente sem querer." | Soft delete via Discard. Sem botão de "desfazer" na tela. | Coletar ID do paciente e ID da clínica. Avisar a clínica que dá pra restaurar via engenharia, mas os lembretes de aniversário foram apagados de verdade e não voltam. | Sempre escalar pra eng com ID do paciente. |
 | "Sumiu a aba Financeiro da ficha." | Feature `access-patient-financial-operations` não está ativa pra clínica. | Confirmar com a clínica se isso já estava disponível antes. Se sim, possivelmente desativação acidental. | Escalar pra eng/produto pedindo ativação da feature, com ID da clínica. |
 | "Os documentos assinados não estão aparecendo na aba Documentos." | A aba escuta WebSocket pra atualizar em tempo real. Conexão WebSocket pode ter caído. | Pedir pra recarregar a página (F5). Após reload, os documentos vêm via API. | Se reload não traz e a assinatura foi concluída no provedor, escalar pra eng com ID do paciente e ID do documento. |
@@ -147,14 +152,14 @@ R: Na aba **Financeiro** dentro da ficha (se a feature estiver ativa). Tem visã
 
 * **Sem mesclagem de pacientes duplicados.** Não há função na UI nem no backend. Tratamento é manual ou via engenharia.
 * **Excluir paciente é soft delete, mas não há botão de restaurar na UI.** Só via engenharia. E os lembretes de aniversário são apagados de verdade na exclusão, então não voltam com a restauração.
-* **CPF não pode ser editado pela UI depois de cadastrado** (campo vem desabilitado). Backend aceitaria, mas a tela bloqueia.
+* **Evolução salva não pode ser editada.** Só rascunho é editável, porque a evolução tem valor jurídico (#27).
 * **Sem permissão por dentista no módulo Pacientes.** Diferente da Agenda, no Pacientes não há equivalente a `show_all_schedules` / `edit_all_schedules`. Todo usuário da clínica vê todos os pacientes.
 * **Sem filtro por dentista, status ou data na lista de pacientes.** A lista ordena por nome e filtra só pelo termo de busca (nome/CPF/telefone/ID prontuário).
 * **Dentista do cabeçalho da ficha é inferido pelo último agendamento.** Não há campo "dentista responsável" persistido na ficha. ✅ Validar
 * **Validação mínima no cadastro:** só **nome** é obrigatório no backend. CPF, e-mail, telefone, nada disso bloqueia o salvamento. Isso facilita criação rápida na recepção, mas favorece duplicidade.
 * **Aba Financeiro depende de feature flag** (`access-patient-financial-operations`). Clínicas sem a feature não veem a aba.
 * **Aba Procedimentos pode estar em versão experimental** (reforma do Carnê) em algumas clínicas, com layout diferente. Não é bug, é experimento.
-* **Origem do paciente (`creation_source`) é registrada mas não exposta na UI hoje** de forma simples. Pacientes criados pela Camila ou pelo link público têm a origem gravada, mas a tela não mostra esse rótulo. ✅ Validar
+* **Origem do paciente (`creation_source`) é registrada mas não exposta na UI.** Pacientes criados pela Camila ou pelo link público têm a origem gravada, mas são exibidos da mesma maneira que os demais (Alan Martins, #26).
 
 ## > 7. 🗺️ Próximos passos [opcional]
 
@@ -205,11 +210,11 @@ R: Na aba **Financeiro** dentro da ficha (se a feature estiver ativa). Tem visã
 **Operação**
 * [ ] Caminho oficial para restaurar paciente soft-deleted: engenharia? formulário interno? Time de Sustentação direto?
 * [ ] Caminho oficial para mesclar/migrar histórico de pacientes duplicados quando há volume relevante de dados nos dois cadastros.
-* [ ] Caminho oficial para corrigir CPF cadastrado errado (UI bloqueia, backend aceita): quem pode fazer e como pedir?
+* [x] Caminho oficial para corrigir CPF cadastrado errado (UI bloqueia, backend aceita): quem pode fazer e como pedir? ✅ A própria clínica edita pela tela "Editar"; testado na clínica interna 62 (Alan Martins, #25)
 * [ ] Comportamento exato de expiração de link de assinatura de anamnese pelo paciente.
 
 **UX**
-* [ ] A interface diferencia visualmente, em algum lugar, pacientes criados pela Camila (`creation_source: artificial_intelligence`) ou pelo link público (`self_appointment_link`)?
+* [x] A interface diferencia visualmente, em algum lugar, pacientes criados pela Camila (`creation_source: artificial_intelligence`) ou pelo link público (`self_appointment_link`)? ✅ Não diferencia, todos são exibidos da mesma maneira (Alan Martins, #26)
 * [ ] O cabeçalho da ficha exibe "último dentista vinculado" baseado no último agendamento. Isso é intencional ou produto pretende ter um campo "dentista responsável" persistido?
 
 **Escalação**

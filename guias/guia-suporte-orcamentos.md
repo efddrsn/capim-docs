@@ -1,6 +1,6 @@
 # 📘 Guia de Suporte: Orçamentos
 
-> Material para o time de suporte da Capim. Atualizado em 12/05/2026.
+> Material para o time de suporte da Capim. Atualizado em 13/11/2026.
 > Status da feature: GA, com um fluxo novo de criação em 4 passos liberado por feature flag (`FF_NEW_BUDGET_ENABLED`). 🚧 PENDENTE: confirmar se a flag já está em 100% das clínicas ou ainda é parcial.
 
 ## 1. 🎯 Visão geral
@@ -9,7 +9,7 @@ Orçamentos é onde o dentista monta a proposta financeira do tratamento que vai
 
 Resolve três dores clássicas da clínica: orçamento feito na mão e esquecido na recepção (sem rastro), divergência entre o que o paciente combinou e o que entra no caixa, e dentista que precisa lembrar de comissão de cada procedimento manualmente.
 
-**Para quem é:** todas as clínicas cliente da Capim, em qualquer plano. ✅ Validar: não há gating de plano identificado no backend para Orçamentos.
+**Para quem é:** todas as clínicas cliente da Capim, em qualquer plano. Não há gating de plano em Orçamentos: o módulo está liberado para todas as clínicas.
 
 **Quem cria, edita e aprova dentro da clínica:** o backend grava `created_by_user_id` e `approved_by_user_id` com o usuário logado em ação, sem verificação de papel específico no controller (qualquer usuário autenticado da clínica que enxerga a ficha do paciente consegue criar e aprovar). 🚧 PENDENTE: confirmar com produto se a regra de negócio esperada é "qualquer usuário" mesmo, ou se há feature/policy específica que o suporte precisa solicitar quando uma clínica quiser restringir quem aprova.
 
@@ -36,7 +36,7 @@ Resolve três dores clássicas da clínica: orçamento feito na mão e esquecido
 2. **Passo 1, Selecionar procedimentos.** A tela mostra o odontograma do paciente (decídua ou permanente) e a tabela de procedimentos. O dentista clica nos dentes pra abrir o drawer de procedimento e escolhe do catálogo, ou adiciona linha avulsa. Cada procedimento traz valor padrão do catálogo, mas pode ser editado ali.
 3. **Passo 2, Definir valores.** O sistema mostra o subtotal, a comissão total dos profissionais, o valor que sobra pra clínica, e o campo de desconto. O desconto aceita valor em reais ou em percentual (toggle de moeda/percentual). Tem também o campo de observações (até 600 caracteres) que sai impresso no orçamento.
 4. **Passo 3, Formas de pagamento.** Duas trilhas: "Definir agora" (escolhe método de pagamento, entrada e parcelas) ou "Definir depois" (passa para aprovação e o financeiro registra a forma à medida que o tratamento avança). Métodos disponíveis: à vista (cartão de crédito, cartão de débito, boleto, dinheiro, cheque, pix, transferência, outros), parcelado com múltiplas formas, ou **Financiamento Capim** (BNPL, aparece quando o valor passa do threshold mínimo configurado no front, `BNPL_THRESHOLD`). 🚧 PENDENTE: confirmar com produto qual é o valor atual desse threshold em produção e se varia por clínica.
-5. **Passo 4, Confirmar.** Tela de revisão com procedimentos, totais, formas de pagamento. Aqui o dentista decide: aprovar **com assinatura eletrônica** (envia pro fluxo de assinatura, gera link pro paciente assinar) ou marcar o checkbox **"Aprovar sem assinatura"** (orçamento vira aprovado direto, sem documento assinado).
+5. **Passo 4, Confirmar.** Tela de revisão com procedimentos, totais, formas de pagamento. Aqui o dentista decide: aprovar **com assinatura eletrônica** (envia pro fluxo de assinatura e o link pro paciente assinar sai pelo WhatsApp) ou marcar o checkbox **"Aprovar sem assinatura"** (orçamento vira aprovado direto, sem documento assinado).
 6. Clica em "Aprovar orçamento" ou "Criar orçamento" (texto muda dependendo do checkbox de aprovação sem assinatura).
 
 **Fluxo típico (criar rascunho):**
@@ -49,33 +49,49 @@ Resolve três dores clássicas da clínica: orçamento feito na mão e esquecido
 * 🟪 **Orçamento criado** (`created`): foi concluído sem aprovação imediata, está pronto pra entrar em pagamento. Editável.
 * ⏳ **Aguardando assinatura** (`waiting_for_signature`): foi enviado pra assinatura eletrônica e está com a Clicksign/provedor rodando. Paciente ainda não assinou.
 * 🔄 **Em processo de geração** (`generating_external_document`): o documento de assinatura está sendo gerado externamente, estado transitório.
-* ❌ **Erro ao solicitar assinatura** (`signature_error`): o fluxo de assinatura falhou ou foi cancelado.
+* ❌ **Erro ao solicitar assinatura** (`signature_error`): o fluxo de assinatura falhou ou foi cancelado. Não há nova tentativa automática: a clínica pode enviar o orçamento novamente para assinatura.
 * ✅ **Assinado** (`signed`): o paciente assinou eletronicamente.
 * ✅ **Aprovado sem assinatura** (`approved_without_signature`): a clínica aprovou marcando "Aprovar sem assinatura", sem documento assinado pelo paciente.
+* ❌ **Orçamento perdido** (`lost`): a clínica marcou o orçamento como perdido (paciente não fechou, fechou com outra clínica, desistiu). Status novo, chegou na atualização do módulo de julho/2026. Tag vermelha na listagem.
+* ⏳ **Em análise de crédito** (`credit_analysis`) e ⏳ **Em negociação** (`negotiating`): rótulos que também existem na listagem atual. "Em negociação" é editável e pode ser aprovado sem assinatura. 🚧 PENDENTE: confirmar com produto quando cada um aparece.
+
+**Fluxo típico (marcar orçamento como perdido):**
+
+1. Na listagem da aba Orçamentos, clica no menu de três pontos do orçamento e escolhe **"Marcar como perdido"**. A opção aparece em qualquer orçamento que ainda não esteja perdido.
+2. Abre o modal **"Marcar orçamento como perdido"**, com o campo **Motivo** (opcional; exemplo da tela: "Paciente fechou com o concorrente").
+3. Se o orçamento já estava **Aprovado sem assinatura** ou **Assinado** (ou seja, já gerou procedimentos e débitos), aparece uma segunda etapa, **"Como deseja prosseguir?"**, com duas opções:
+   * **"Manter o que já foi realizado"**: exclui procedimentos não realizados e débitos não recebidos.
+   * **"Excluir tudo"**: remove também procedimentos finalizados e débitos já recebidos.
+
+   Se o orçamento estava Assinado, aparece também o aviso de que o orçamento assinado será removido do sistema da clínica, mas o paciente mantém acesso à cópia assinada.
+4. Clica em **"Marcar como perdido"**. Aparece a mensagem "Orçamento marcado como perdido" e a tag passa a ser **"Orçamento perdido"**.
+
+Depois de perdido, o orçamento **continua na listagem** (com o motivo guardado), mas some a opção "Editar" e o botão de assinatura. "Visualizar orçamento" continua disponível e a exclusão passa a ser um botão de lixeira direto na linha. Na aba Financeiro do paciente, o lançamento ligado a esse orçamento ganha a tag "Orçamento perdido" e não aceita novo pagamento.
 
 **⚠️ Atenção:**
 
-* **Não existe status "expirado" automático.** O orçamento tem um campo `valid_until` (validade) que é gravado e aparece impresso no PDF, **mas o sistema não muda o status sozinho quando essa data passa**. A validade é informativa pro paciente, não um gatilho automático no backend.
-* **Não existe status "recusado" pelo paciente.** O fluxo previsto é a clínica apagar (excluir) o orçamento quando o paciente não fechar, ou deixar parado em "Rascunho". O suporte deve esclarecer: se o paciente não fechou, a clínica exclui ou substitui por outro orçamento.
-* **Aprovar sem assinatura é definitivo no estado da AASM**: o backend chama `finish!` e o orçamento passa pra `finished` (consolidado como `approved_without_signature`). Não há botão "voltar pra rascunho" depois de aprovado.
+* **A validade não muda o status sozinha.** O orçamento tem um campo `valid_until` (validade) que é gravado e aparece impresso no PDF, **mas o sistema não muda o status quando essa data passa**. Desde julho/2026 existe o status **Perdido**, que no dash é aplicado pela ação manual "Marcar como perdido". 🚧 PENDENTE: confirmar se o backend também marca orçamento como perdido de forma automática (ex: validade vencida).
+* **Não existe status "recusado"; o caminho é "Marcar como perdido".** Se o paciente não fechou, a clínica marca o orçamento como perdido (e pode registrar o motivo). Ele fica no histórico com a tag "Orçamento perdido", sem precisar ser excluído.
+* **Aprovar sem assinatura é definitivo no estado da AASM**: o backend chama `finish!` e o orçamento passa pra `finished` (consolidado como `approved_without_signature`). Não há botão "voltar pra rascunho" depois de aprovado. O caminho oficial pra corrigir é excluir e recriar.
 * **Excluir orçamento abre um modal com 4 opções de remoção** (escolhe o que faz com procedimentos e débitos já gerados, ver seção FAQ).
-* **Edição depois de aprovado é bloqueada.** Só rascunho, pendente (estado interno antigo) e criado são editáveis (`EDITABLE_STATUS`).
+* **Edição depois de aprovado é bloqueada.** Só rascunho, pendente (estado interno antigo), criado e em negociação são editáveis (`EDITABLE_STATUS`). Orçamento perdido também não edita.
 
 ## > 3. 💼 Casos de uso esperados
 
-* **Caso 1, primeiro orçamento no plano de tratamento:** o paciente chega, faz a avaliação, o dentista usa o odontograma na aba Procedimentos para marcar o que precisa ser feito (cárie no 16, canal no 36, restauração no 11) e clica em "Criar orçamento". O fluxo já abre no passo 1 com esses procedimentos selecionados. O dentista revisa valores, define forma de pagamento e aprova. Os débitos entram no Controle Financeiro e o paciente recebe o link de assinatura.
+* **Caso 1, primeiro orçamento no plano de tratamento:** o paciente chega, faz a avaliação, o dentista usa o odontograma na aba Procedimentos para marcar o que precisa ser feito (cárie no 16, canal no 36, restauração no 11) e clica em "Criar orçamento". O fluxo já abre no passo 1 com esses procedimentos selecionados. O dentista revisa valores, define forma de pagamento e aprova. Os débitos entram no Controle Financeiro e o paciente recebe o link de assinatura pelo WhatsApp.
 * **Caso 2, paciente pede pra pensar:** o dentista monta o orçamento até o passo 3 ou 4, sai sem aprovar. Fica como Rascunho. Quando o paciente volta na clínica, a recepção entra na ficha, aba Orçamentos, clica em "Editar" no rascunho, ajusta o que mudou e aprova.
 * **Caso 3, paciente quer dividir o pagamento (entrada + parcelas):** no passo 3, o dentista escolhe "Definir agora", marca entrada (down payment, ex: cartão de débito agora) e o restante em parcelas (ex: cartão de crédito em N vezes). Tela de revisão mostra os dois blocos: Entrada e Pagamento parcelado.
 * **Caso 4, financiamento via Capim:** quando o valor do orçamento passa do threshold, no passo 3 aparece o banner do Financiamento Capim. O dentista escolhe BNPL e o sistema redireciona o paciente pro fluxo de pré-análise (abre em nova aba). Fluxo do financiamento em si tem guia próprio.
 * **Caso 5, paciente vai pagar à vista:** o dentista escolhe "Pagamento à vista", seleciona método (pix, dinheiro, cartão), aprova. A clínica pode marcar "Aprovar sem assinatura" se for procedimento simples e o paciente já pagou no balcão.
 * **Caso 6, dentista precisa reaproveitar um orçamento parecido:** **não há funcionalidade de duplicar.** O caminho prático é olhar o orçamento antigo no histórico (a aba lista todos), abrir o PDF para conferir e refazer o novo orçamento do zero.
-* **Caso 7, dentista quer enviar o orçamento por WhatsApp:** **a tela de imprimir/visualizar abre o PDF em nova janela**, e o dentista usa o navegador pra baixar/salvar e mandar manualmente. ✅ Validar: não foi identificado botão "enviar por WhatsApp" direto da tela de orçamento. Há o fluxo de assinatura eletrônica (que envia link pro paciente), mas não envio do PDF puro.
+* **Caso 7, dentista quer enviar o orçamento por WhatsApp:** **não há botão de enviar o PDF por WhatsApp.** O caminho atual é manual: "Visualizar orçamento" abre o PDF em nova aba, o dentista salva o PDF pelo navegador e envia por fora (WhatsApp web ou app). O que sai automaticamente pelo WhatsApp é só o link do fluxo de assinatura eletrônica.
+* **Caso 8, paciente não fechou o tratamento:** a recepção abre a aba Orçamentos, escolhe "Marcar como perdido" no menu do orçamento e registra o motivo (ex: "Paciente fechou com o concorrente"). O orçamento fica no histórico com a tag "Orçamento perdido", sem precisar ser excluído.
 
 ## > 4. ❓ FAQ
 
 **P: O paciente disse que não recebeu o link de assinatura do orçamento. O que fazer?**
 
-R: Primeiro confirmar (1) o paciente tem celular e e-mail cadastrados corretos na ficha? (2) O orçamento está em "Aguardando assinatura" ou em "Erro ao solicitar assinatura"? Se está em erro, o fluxo de assinatura falhou: a clínica pode tentar reenviar pela aba Documentos do paciente, ou apagar o orçamento e refazer. 🚧 PENDENTE: confirmar com produto qual é o canal exato pelo qual o link de assinatura sai (WhatsApp, e-mail, ambos) e qual a janela típica de entrega.
+R: O link de assinatura sai **pelo WhatsApp**. Primeiro confirmar (1) o paciente tem celular com WhatsApp cadastrado corretamente na ficha? (2) O orçamento está em "Aguardando assinatura" ou em "Erro ao solicitar assinatura"? Se está em erro, o fluxo de assinatura falhou e **não há nova tentativa automática**: a clínica pode enviar o orçamento novamente para assinatura. Se o reenvio também falhar, escalar. 🚧 PENDENTE: caminho exato na tela para reenviar (na listagem de Orçamentos, o botão de assinatura de um orçamento com erro aparece com ícone de alerta) e janela típica de entrega da mensagem.
 
 **P: O orçamento aprovado sumiu da tela ou virou outro status, o que aconteceu?**
 
@@ -83,7 +99,15 @@ R: Tipicamente é o fluxo de assinatura mudando de estado em tempo real via webs
 
 **P: A clínica quer "recusar" um orçamento. Como?**
 
-R: Não tem botão "recusar". O caminho prático é **excluir o orçamento** pela aba Orçamentos. O modal de exclusão pergunta o que fazer com os procedimentos e débitos vinculados (ver pergunta abaixo). Se a clínica só quer guardar o histórico, oriente a deixar o orçamento como está (Rascunho ou Criado) e criar outro orçamento atualizado.
+R: Não tem botão "recusar". Desde a atualização de julho/2026, o caminho é **"Marcar como perdido"**, no menu de três pontos do orçamento na aba Orçamentos. A clínica pode informar o motivo (opcional). Se o orçamento já estava aprovado ou assinado, o modal pergunta o que fazer com procedimentos e débitos já gerados ("Manter o que já foi realizado" ou "Excluir tudo"). Ver o passo a passo em "Fluxo típico (marcar orçamento como perdido)".
+
+**P: Qual a diferença entre marcar como perdido e excluir o orçamento?**
+
+R: **Perdido** mantém o orçamento na listagem, com a tag "Orçamento perdido" e o motivo informado: serve pra guardar histórico de proposta que não fechou. **Excluir** tira o orçamento do sistema da clínica, com as 4 opções de remoção de procedimentos e débitos (ver pergunta abaixo). Um orçamento perdido ainda pode ser excluído depois, pelo botão de lixeira na linha.
+
+**P: O orçamento vira "Perdido" sozinho quando a validade passa?**
+
+R: No dash, a marcação como perdido é uma ação manual da clínica. A data de validade (`valid_until`) continua só informativa, impressa no PDF. 🚧 PENDENTE: confirmar com produto se existe marcação automática pelo backend.
 
 **P: O que cada opção do modal de excluir faz?**
 
@@ -98,7 +122,7 @@ Se o orçamento foi assinado, aparece um alerta: o orçamento assinado é removi
 
 **P: Aprovou orçamento errado, dá pra desfazer?**
 
-R: Pela interface, não. O orçamento passa pra `finished` na AASM e não tem botão "voltar pra rascunho". O caminho prático é excluir e recriar (escolhendo a opção de remoção que faça sentido pros débitos e procedimentos que já foram lançados). 🚧 PENDENTE: confirmar com a engenharia se existe transição interna pra reverter um orçamento aprovado por engano (similar à reativação de agendamento cancelado), ou se o caminho é apagar mesmo.
+R: Não. O orçamento passa pra `finished` na AASM e não tem botão "voltar pra rascunho". **O caminho oficial hoje é excluir e recriar** (escolhendo a opção de remoção que faça sentido pros débitos e procedimentos que já foram lançados). Não há rota interna de reversão pra pedir à engenharia.
 
 **P: Como o desconto entra no cálculo?**
 
@@ -114,7 +138,7 @@ R: Na listagem da aba Orçamentos, clica no menu de três pontos do orçamento e
 
 **P: Tem como mandar o orçamento pelo WhatsApp direto do sistema?**
 
-R: ✅ Validar: pela investigação no código, o caminho é abrir o PDF e enviar manualmente (compartilhar o link ou o arquivo pelo WhatsApp web/app). O envio automatizado vem pelo fluxo de **assinatura eletrônica**, que dispara link de assinatura pro paciente. Não foi identificado botão direto "Enviar por WhatsApp" do PDF de orçamento.
+R: Não. O caminho atual é manual: abrir o PDF por "Visualizar orçamento", salvar o PDF pelo navegador e enviar pelo WhatsApp web ou app. O único envio automático pelo WhatsApp é o do fluxo de **assinatura eletrônica**, que manda o link de assinatura pro paciente.
 
 **P: Quem aparece como "Adicionado por" / "Editado por"?**
 
@@ -137,12 +161,13 @@ R: A atualização é via websocket. Pedir pra recarregar a página (F5). Se mes
 | Sintoma (o que a clínica relata) | Causa provável | O que o suporte faz | Quando escalar |
 |---|---|---|---|
 | "Aprovei o orçamento e não apareceu o débito no financeiro." | Aprovação travou no meio (erro em comissões, no checkout ou no documento), ou o usuário olhou no lugar errado. | Confirmar status do orçamento (aprovado de fato?). Conferir aba Financeiro do paciente. Pedir refresh. Pegar ID do orçamento. | Se o orçamento está aprovado mas os débitos não foram gerados, escalar pra eng com ID do orçamento e ID da clínica. |
-| "Não consigo editar o orçamento, o botão sumiu." | Orçamento já está em estado que bloqueia edição (Aprovado sem assinatura, Aguardando assinatura, Assinado, etc.). Só Rascunho, Pendente e Criado aparecem como editáveis. | Confirmar o status do orçamento na tag da listagem. Explicar a regra: aprovado não edita. | Se o cliente jura que está em Rascunho e mesmo assim não aparece "Editar", escalar pra eng. |
-| "O paciente não recebeu o link de assinatura." | Cadastro do paciente sem celular/e-mail, ou o fluxo travou no provedor de assinatura. | Conferir cadastro do paciente. Conferir status do documento na aba Documentos. Se está em "Erro ao solicitar assinatura", refazer o envio. | Se o documento foi gerado mas o link não saiu, escalar pra eng com ID do documento. |
-| "Marquei 'sem assinatura' por engano e o orçamento foi aprovado." | Aprovou direto via checkbox no passo 4. Não tem botão de desfazer. | Orientar o caminho de excluir o orçamento (escolhendo a opção de remoção que preserve o que já aconteceu) e recriar com o fluxo de assinatura. | Se a clínica pedir reverter em vez de recriar, abrir ticket pra engenharia com o ID do orçamento. 🚧 PENDENTE confirmar se existe rota interna pra reverter. |
+| "Não consigo editar o orçamento, o botão sumiu." | Orçamento já está em estado que bloqueia edição (Aprovado sem assinatura, Aguardando assinatura, Assinado, Orçamento perdido etc.). Só Rascunho, Pendente, Criado e Em negociação aparecem como editáveis. | Confirmar o status do orçamento na tag da listagem. Explicar a regra: aprovado não edita. | Se o cliente jura que está em Rascunho e mesmo assim não aparece "Editar", escalar pra eng. |
+| "O paciente não recebeu o link de assinatura." | O link sai pelo WhatsApp: cadastro do paciente sem celular (ou com número errado), ou o fluxo travou no provedor de assinatura. | Conferir o celular no cadastro do paciente. Conferir status do documento na aba Documentos. Se está em "Erro ao solicitar assinatura", orientar a clínica a enviar novamente para assinatura (não há nova tentativa automática). | Se o documento foi gerado mas o link não saiu, ou se o reenvio também falha, escalar pra eng com ID do documento. |
+| "Marquei 'sem assinatura' por engano e o orçamento foi aprovado." | Aprovou direto via checkbox no passo 4. Não tem botão de desfazer. | Orientar o caminho oficial: excluir o orçamento (escolhendo a opção de remoção que preserve o que já aconteceu) e recriar com o fluxo de assinatura. | Não há rota interna de reversão: o caminho é excluir e recriar. Só escalar se a exclusão ou a recriação der erro. |
+| "Marquei o orçamento como perdido por engano." | Ação "Marcar como perdido" confirmada no modal. | Explicar que não há na tela opção de desfazer o status Perdido. Se a clínica ainda vai seguir com o tratamento, orientar a criar um orçamento novo. | 🚧 PENDENTE: confirmar com produto se existe forma de reverter o status Perdido. |
 | "Excluí o orçamento e perdi débitos que já estavam pagos." | A clínica escolheu `full_wipe` em vez de `remove_uncompleted` no modal. | Mostrar a diferença das 4 opções (FAQ). Explicar que `full_wipe` apaga tudo, inclusive o que já aconteceu. | Se a clínica precisa restaurar débitos apagados, escalar pra eng com ID do orçamento e a data da exclusão. |
 | "O Financiamento Capim não aparece como opção no orçamento." | Valor do orçamento abaixo do threshold mínimo de BNPL, ou clínica sem habilitação pra BNPL. | Conferir valor do orçamento. Conferir se a clínica está habilitada pra Financiamento Capim. | Encaminhar pro time/guia de Financiamento Capim. |
-| "O orçamento mostra a data de validade vencida e ainda aceita pagamento." | Esperado: a `valid_until` é informativa, não bloqueia nada. | Esclarecer que o campo é só pro PDF e não muda status automaticamente. Se a clínica quer "fechar" o orçamento vencido, orientar a excluir ou criar novo. | Não escala, é comportamento atual. |
+| "O orçamento mostra a data de validade vencida e ainda aceita pagamento." | Esperado: a `valid_until` é informativa, não bloqueia nada. | Esclarecer que o campo é só pro PDF e não muda status automaticamente. Se a clínica quer "fechar" o orçamento vencido, orientar a usar "Marcar como perdido" (ou criar um orçamento novo, se o paciente ainda vai fechar). | Não escala, é comportamento atual. |
 | "O orçamento mudou de status sozinho." | Atualização via websocket do fluxo de assinatura (Aguardando → Em geração → Assinado, ou erro). | Confirmar pelo nome do status atual. É esperado e em tempo real. | Só escala se o status muda de forma inconsistente com o fluxo (ex: vai pra "Erro" sem nunca ter sido enviado pra assinatura). |
 | "Estou no fluxo novo (4 passos) e a clínica do lado está no fluxo antigo (uma tela só)." | Feature flag `FF_NEW_BUDGET_ENABLED` controla qual fluxo aparece. Pode ter ido pra uma clínica e não pra outra. | Confirmar a clínica e checar a flag. 🚧 PENDENTE: confirmar canal/ferramenta exata pro suporte conferir feature flag por clínica. | Escalar pra eng se a flag deveria estar ativa e não está. |
 
@@ -150,12 +175,14 @@ R: A atualização é via websocket. Pedir pra recarregar a página (F5). Se mes
 
 ## > 6. ⚠️ Limitações conhecidas
 
-* **Não há status "expirado" automático.** O campo `valid_until` é gravado e impresso no PDF, mas o sistema não muda o status sozinho quando a data passa.
-* **Não há status "recusado pelo paciente".** O fluxo previsto é a clínica excluir o orçamento ou deixar como Rascunho/Criado se o paciente não fechar.
+* **A validade não muda o status.** O campo `valid_until` é gravado e impresso no PDF, mas o sistema não muda o status sozinho quando a data passa. O status **Perdido** (julho/2026) é marcado manualmente pela clínica.
+* **Não há status "recusado pelo paciente".** O caminho é "Marcar como perdido", que guarda o orçamento no histórico com a tag "Orçamento perdido".
+* **Status Perdido não tem "desfazer" na tela.** 🚧 PENDENTE: confirmar se há reversão.
 * **Não há funcionalidade de duplicar orçamento.** Pra fazer um parecido, refaz do zero.
-* **Não há botão "enviar por WhatsApp" direto.** O caminho é abrir o PDF (Visualizar) e enviar manualmente pelo navegador, ou usar o fluxo de assinatura eletrônica (que envia link). ✅ Validar.
-* **Não há "voltar pra rascunho" depois de aprovar.** Aprovou, fechou. Se errou, exclui e refaz.
-* **Edição depois de aprovado é bloqueada na interface.** Os estados editáveis são `draft`, `pending` e `created` (`EDITABLE_STATUS` no front).
+* **Não há botão "enviar por WhatsApp" para o PDF.** O caminho atual é manual: abrir o PDF (Visualizar), salvar pelo navegador e enviar. Pelo WhatsApp, o sistema só envia o link do fluxo de assinatura eletrônica.
+* **Erro ao solicitar assinatura não tem nova tentativa automática.** A clínica precisa enviar novamente para assinatura.
+* **Não há "voltar pra rascunho" depois de aprovar.** Aprovou, fechou. Se errou, o caminho oficial é excluir e recriar.
+* **Edição depois de aprovado é bloqueada na interface.** Os estados editáveis são `draft`, `pending`, `created` e `negotiating` (`EDITABLE_STATUS` no front).
 * **Não há, no controller, policy específica restringindo quem cria ou aprova.** Qualquer usuário autenticado que abre a ficha do paciente consegue. 🚧 PENDENTE confirmar se isso é intencional.
 * **Threshold do Financiamento Capim está hardcoded no frontend** (`BNPL_THRESHOLD`). Mudanças desse valor exigem deploy. 🚧 PENDENTE confirmar valor atual em produção.
 * **Cancelamento (exclusão) tem 4 estratégias e a escolha errada perde dados** (ex: `full_wipe` apaga pagamentos já recebidos). Sem rollback automático.
@@ -165,7 +192,7 @@ R: A atualização é via websocket. Pedir pra recarregar a página (F5). Se mes
 
 * Rollout do fluxo novo em 4 passos pra 100% das clínicas. 🚧 PENDENTE: status atual.
 * Possível integração mais profunda com Carnê e Maquininha como formas de pagamento padrão do orçamento. 🚧 PENDENTE.
-* ✅ Validar com produto: roadmap de status "expirado" automático ou notificação de validade vencida.
+* Status **Perdido** entregue na atualização de julho/2026 (ação manual "Marcar como perdido"). 🚧 PENDENTE: confirmar se haverá marcação automática ou notificação de validade vencida.
 
 ## > 8. 🖼️ Telas e fluxos
 
@@ -191,24 +218,29 @@ R: A atualização é via websocket. Pedir pra recarregar a página (F5). Se mes
 
 **Visão geral e disponibilidade**
 * [ ] Status atual da feature flag `FF_NEW_BUDGET_ENABLED`: já está em 100% das clínicas? Se não, qual canal/ferramenta o suporte usa pra conferir se uma clínica está no fluxo novo ou antigo?
-* [ ] Existe gating de plano em Orçamentos, ou está liberado pra todas as clínicas em qualquer plano?
+* [x] Existe gating de plano em Orçamentos, ou está liberado pra todas as clínicas em qualquer plano? **Resposta:** liberado para todas as clínicas, em qualquer plano. (Alan Martins, issue #21)
 
 **Permissões**
 * [ ] É intencional que qualquer usuário autenticado da clínica crie e aprove orçamento, ou existe policy/feature que o suporte solicita pra restringir (ex: só admin aprova)?
 
 **Status e fluxo**
-* [ ] Existe rota interna pra reverter um orçamento aprovado por engano (similar à reativação de agendamento cancelado), ou o caminho oficial é excluir e recriar?
-* [ ] Roadmap de status "expirado" automático: tem? Quando?
+* [x] Existe rota interna pra reverter um orçamento aprovado por engano (similar à reativação de agendamento cancelado), ou o caminho oficial é excluir e recriar? **Resposta:** o caminho oficial hoje é excluir e recriar. (Alan Martins, issue #16)
+* [x] Roadmap de status "expirado" automático: tem? Quando? **Resposta:** o módulo recebeu atualização em julho/2026 e o orçamento agora possui o status Perdido. No dash, ele é marcado pela ação manual "Marcar como perdido". (Alan Martins, issues #15 e #17)
+* [ ] O status Perdido também é aplicado automaticamente pelo backend (ex: validade vencida), ou só pela ação manual "Marcar como perdido"?
+* [ ] Existe forma de reverter um orçamento marcado como Perdido por engano, ou o caminho é criar um orçamento novo?
+* [ ] Quando aparecem os status "Em análise de crédito" (`credit_analysis`) e "Em negociação" (`negotiating`), que já existem na listagem?
 
 **Assinatura**
-* [ ] Canal exato pelo qual o link de assinatura sai pro paciente (WhatsApp, e-mail, ambos) e janela típica de entrega.
-* [ ] Quando o status muda pra "Erro ao solicitar assinatura", existe ação automatizada de retry, ou a clínica precisa refazer manualmente?
+* [x] Canal exato pelo qual o link de assinatura sai pro paciente (WhatsApp, e-mail, ambos) e janela típica de entrega. **Resposta:** o link sai pelo WhatsApp. A janela de entrega não foi informada (ver lacuna abaixo). (Alan Martins, issue #18)
+* [ ] Janela típica de entrega do link de assinatura pelo WhatsApp: em quanto tempo o paciente deve receber?
+* [x] Quando o status muda pra "Erro ao solicitar assinatura", existe ação automatizada de retry, ou a clínica precisa refazer manualmente? **Resposta:** a clínica pode enviar novamente para assinatura. (Alan Martins, issue #19)
+* [ ] Qual o caminho exato na tela pra enviar novamente para assinatura um orçamento em "Erro ao solicitar assinatura"? Na listagem de Orçamentos, o botão de assinatura desse orçamento aparece com ícone de alerta e não identificamos no código um botão de reenvio ali.
 
 **Financiamento Capim**
 * [ ] Valor atual do threshold de BNPL em produção (`BNPL_THRESHOLD`) e se varia por clínica.
 
 **Envio do orçamento**
-* [ ] Existe botão/fluxo de "enviar PDF do orçamento por WhatsApp" que o suporte deveria conhecer, ou o caminho é mesmo enviar manualmente pelo navegador?
+* [x] Existe botão/fluxo de "enviar PDF do orçamento por WhatsApp" que o suporte deveria conhecer, ou o caminho é mesmo enviar manualmente pelo navegador? **Resposta:** o caminho atual é manual: salvar o PDF e enviar pelo navegador. (Alan Martins, issue #20)
 
 **Escalação**
 * [ ] SLA esperado de resposta pra cada nível de severidade no Time de Sustentação.
@@ -217,7 +249,7 @@ R: A atualização é via websocket. Pedir pra recarregar a página (F5). Se mes
 
 Itens que ainda dependem de confirmação oficial:
 
-* [ ] "Não há botão de enviar PDF do orçamento por WhatsApp direto da tela." Inferido pela ausência no código, mas vale validar se existe via algum componente compartilhado de documentos.
+* [x] "Não há botão de enviar PDF do orçamento por WhatsApp direto da tela." Inferido pela ausência no código, mas vale validar se existe via algum componente compartilhado de documentos. **Resposta:** confirmado, o caminho atual é manual (salvar o PDF e enviar pelo navegador). (Alan Martins, issue #20)
 * [ ] "Não há funcionalidade de duplicar orçamento." Inferido pela ausência no código.
 * [ ] "Qualquer usuário autenticado consegue criar/aprovar." Inferido pelo controller (sem policy), mas a regra de negócio pode ser outra.
 * [ ] "Procedimento avulso criado dentro do orçamento não vira item de catálogo." Inferido pelo `CreateForm`, vale confirmar com produto.
@@ -226,10 +258,11 @@ Itens que ainda dependem de confirmação oficial:
 
 Fact-check feito contra `capim-dash-backend`, podem ser tratados como confirmados:
 
-* Status interno (AASM): `draft`, `pending`, `analyzing`, `created`, `finished`. Status consolidado exposto na UI: `draft`, `created`, `approved_without_signature`, `generating_external_document`, `waiting_for_signature`, `signature_error`, `signed`.
+* Status interno (AASM): `draft`, `pending`, `analyzing`, `created`, `finished`. Status consolidado exposto na UI: `draft`, `created`, `approved_without_signature`, `generating_external_document`, `waiting_for_signature`, `signature_error`, `signed`. No front atual (nov/2026) também existem `negotiating` (status interno e consolidado), `credit_analysis` e `lost` (consolidados).
+* Marcar como perdido chama `PATCH /v2/patient/:id/budgets/:budget_id/lose` com `lost_reason` (opcional) e, quando o orçamento já estava aprovado sem assinatura ou assinado, `financial_handling` (`remove_uncompleted` ou `full_wipe`). Fonte: `capim-dash-frontend`.
 * Aprovar dispara `Budgets::Finish` que faz transição AASM pra `finished` dentro de transação. Não há "desfazer" pela interface.
 * Exclusão tem 4 estratégias em `Budgets::V2::Destroy`: `full_wipe`, `remove_uncompleted`, `keep_debits_remove_procedures`, `keep_procedures_remove_debits`.
-* `EDITABLE_STATUS = ['pending', 'draft', 'created']` controla quem mostra botão "Editar" na listagem.
+* `EDITABLE_STATUS = ['pending', 'draft', 'created', 'negotiating']` controla quem mostra botão "Editar" na listagem (front, nov/2026).
 * `valid_until` é gravado e usado no PDF, sem efeito automático no status.
 * Desconto tem dois tipos: `amount` (reais) e `percentage` (front converte pra reais antes de enviar).
 * `creation_source` pode ser `treatment_plan`, `budgets_index` ou `tutorial`, dependendo de onde a criação começou.

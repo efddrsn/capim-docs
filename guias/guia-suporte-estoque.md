@@ -1,6 +1,6 @@
 # 📦 Guia de Suporte: Estoque
 
-> Material para o time de suporte da Capim. Atualizado em 12/05/2026.
+> Material para o time de suporte da Capim. Atualizado em 13/11/2026.
 > Status da feature: GA, dividido em dois sub módulos com telas próprias dentro do menu **Controle de Estoque**: **Estoque** (controle de materiais) e **Solicitações de Prótese** (pedidos ao laboratório protético).
 
 ## 1. 🎯 Visão geral
@@ -79,8 +79,8 @@ Resolve duas dores clássicas da clínica: a recepção descobrir só no meio do
 
 **Busca e filtros na lista:**
 
-* Campo de busca por nome (autocomplete por Elasticsearch).
-* Backend aceita filtro por **categorias** e por **disponibilidades** (ex: listar só "baixo" e "indisponível"). ✅ Validar com produto se a UI atual já expõe esses filtros ou se hoje só aparece a busca por nome.
+* **Atualmente a lista só tem busca por nome** (autocomplete por Elasticsearch).
+* **Não há filtro por Categoria nem por Disponibilidade na tela.** O backend aceita esses filtros, mas a interface não os expõe. Pra achar itens em falta, a clínica precisa olhar as tags na lista.
 
 ### 2.2 Solicitações de Prótese
 
@@ -164,7 +164,7 @@ Resolve duas dores clássicas da clínica: a recepção descobrir só no meio do
 **⚠️ Atenção:**
 
 * **Valor da prótese, valor do transporte e data de pagamento ficam guardados no pedido**, mas **não geram lançamento automático no Controle Financeiro**. Se a clínica quer registrar a despesa, faz lançamento manual no financeiro.
-* **Não há cadastro de laboratórios.** Campo é texto livre. Para ver "histórico por laboratório" hoje, a clínica filtra cliente a cliente ou olha pelo nome no card. ✅ Validar se em algum lugar da UI existe agrupamento por laboratório (não encontrei).
+* **Não há cadastro de laboratórios.** Campo é texto livre. **Não existe agrupamento nem relatório por laboratório protético.** Para ver "histórico por laboratório" hoje, a clínica filtra paciente a paciente ou olha pelo nome no card.
 
 ## > 3. 💼 Casos de uso esperados
 
@@ -192,7 +192,7 @@ R: Não. O valor unitário e o fornecedor ficam guardados na movimentação de E
 
 **P: Posso editar ou apagar uma movimentação registrada errada?**
 
-R: O backend tem um endpoint de **destroy** que apaga a movimentação e **reverte a quantidade do estoque** (se era Entrada, subtrai; se era Saída, soma). ✅ Validar com produto se a UI atual já expõe esse botão de excluir movimentação na lista. Editar uma movimentação existente: não há endpoint para isso no backend; o jeito é excluir e recriar.
+R: **Pela tela, não.** Não existe botão de excluir movimentação na interface, nem de editar. O backend até tem um endpoint que apaga a movimentação e reverte a quantidade do estoque, mas ele não está disponível pra clínica. Pra corrigir o saldo, o caminho pela tela é registrar uma movimentação compensatória (uma Entrada pra compensar uma Saída a mais, ou uma Saída pra compensar uma Entrada a mais). Se a clínica precisa apagar o registro errado do histórico, escalar pra engenharia.
 
 **P: Tem como cadastrar fornecedor uma vez e reaproveitar?**
 
@@ -212,7 +212,7 @@ R: Não. **Não existe cadastro de laboratórios.** Em cada solicitação de pr�
 
 **P: O dentista pode ver "todos os pedidos com o Laboratório X"?**
 
-R: Não há filtro por laboratório na tela. Os filtros disponíveis em **"Filtrar"** são: paciente, responsável e intervalo de datas de criação. Visual sim: na hora de bater o olho no kanban, dá pra ver o nome do laboratório no card. 🚧 PENDENTE: confirmar com produto se há algum relatório agregado por laboratório no dashboard.
+R: Não. Não há filtro por laboratório na tela, e **não existe agrupamento nem relatório por laboratório protético** no dash. Os filtros disponíveis em **"Filtrar"** são: paciente, responsável e intervalo de datas de criação. O que dá pra fazer é bater o olho no kanban: o nome do laboratório aparece no card.
 
 **P: Onde vejo as próteses já instaladas?**
 
@@ -237,13 +237,15 @@ R: Cálculo no frontend: se o status do pedido é **Enviada para laboratório** 
 | "Cadastrei o item mas ele aparece como Indisponível." | Não foi registrada nenhuma Entrada. O cadastro do item começa com quantidade zero. | Orientar a clínica a registrar uma movimentação de Entrada com a quantidade que tem hoje em estoque, data, valor unitário e (se quiser) lote e validade. | Se a Entrada foi feita e mesmo assim a quantidade não atualizou, escalar pra eng com ID do item, ID da clínica e print da movimentação. |
 | "Registrei a Saída mas o estoque não diminuiu." | Possível erro de gravação ou falha em rede no momento do salvar. | Pedir pra abrir o detalhe do item (`/#/inventory/:id`) e ver se a movimentação aparece na tabela. Se não aparece, refazer. Se aparece e a quantidade no card está errada, é inconsistência de banco. | Inconsistência (movimentação existe mas saldo não bate): escalar pra eng. |
 | "Não consigo marcar Saída maior que o estoque atual." | ✅ Validar: o backend só valida `quantity > 0` (não bloqueia saída maior que o saldo). Logo, o saldo **pode ficar negativo**. Se a clínica diz que está bloqueando, conferir a versão do frontend. | Conferir se houve mensagem de erro específica no momento da saída. Refazer pode resolver. | Se o saldo ficou negativo e a clínica quer corrigir, orientar a registrar uma Entrada compensatória; se isso atrapalha, escalar pra eng. |
-| "A clínica não recebeu alerta de que a luva acabou." | Não existe envio ativo de alerta. O sistema mostra só tag visual na tela de Estoque. | Explicar a regra: alerta é apenas visual, na tela. Orientar a clínica a abrir a tela de Estoque periodicamente, ou usar o filtro por **Disponibilidade** para listar só "baixo" e "indisponível". | Se a clínica pede alerta ativo (push, e mail), é pedido de feature: registrar como sugestão de produto. |
+| "A clínica não recebeu alerta de que a luva acabou." | Não existe envio ativo de alerta. O sistema mostra só tag visual na tela de Estoque. | Explicar a regra: alerta é apenas visual, na tela. Orientar a clínica a abrir a tela de Estoque periodicamente e conferir as tags. Não há filtro por Disponibilidade na tela (só busca por nome). | Se a clínica pede alerta ativo (push, e mail), é pedido de feature: registrar como sugestão de produto. |
 | "Compra de material não apareceu no Controle Financeiro." | Não há integração automática. Valor da Entrada fica só no histórico de movimentações do item. | Orientar a clínica a lançar a despesa manualmente em Financeiro. | Se a clínica pede a integração, registrar como sugestão de produto. |
 | "O dentista executou o procedimento e o estoque não desceu." | Não há consumo automático por procedimento. | Explicar que a baixa é sempre manual no card do item, opção Saída. | Pedido recorrente: registrar como sugestão de produto. |
 | "Card de prótese não arrasta." | Checkbox **"Instalada"** está marcado no card. | Orientar a desmarcar **"Instalada"** primeiro, depois arrastar. | Se mesmo desmarcado não arrasta, escalar pra eng com print e ID do pedido. |
 | "Mudei o pedido de coluna e perdi os dados que tinha digitado." | A transição pede campos obrigatórios da etapa nova (data e horário de envio, ou data de recebimento). Se sair sem salvar, a transição não acontece. | Pedir pra reabrir o card e preencher os campos da etapa que está tentando ativar. | Se os campos foram preenchidos e o erro persiste, escalar pra eng com ID do pedido e print do drawer. |
 | "Solicitação de prótese sumiu do kanban." | Pode ter sido excluída (soft delete), ou está fora da janela de datas do filtro padrão (últimos 30 dias). | Ampliar o intervalo no botão **"Filtrar"**. Se mesmo assim não aparece, é exclusão. | Restauração de pedido excluído: escalar pra eng com ID do pedido. |
-| "Quero ver todos os pedidos do Laboratório X." | Não há filtro por laboratório. Campo é texto livre. | Explicar a limitação. Sugerir cuidado na padronização do nome do laboratório nos próximos pedidos. | Pedido de filtro: registrar como sugestão de produto. |
+| "Quero ver todos os pedidos do Laboratório X." | Não há filtro, agrupamento nem relatório por laboratório. Campo é texto livre. | Explicar a limitação. Sugerir cuidado na padronização do nome do laboratório nos próximos pedidos. | Pedido de filtro ou relatório: registrar como sugestão de produto. |
+| "Registrei uma movimentação errada e quero apagar." | Não há botão de excluir (nem de editar) movimentação na tela. | Orientar a registrar uma movimentação compensatória pra acertar o saldo. | Se a clínica precisa remover o registro do histórico, escalar pra eng com ID do item e data da movimentação. |
+| "Quero filtrar o estoque por categoria ou ver só o que está em falta." | A lista de Estoque só tem busca por nome. Não há filtro por Categoria nem por Disponibilidade. | Explicar a limitação. Orientar a conferir as tags (Estoque baixo, Indisponível) direto na lista. | Pedido de filtro: registrar como sugestão de produto. |
 
 **Para quem escalar:** **Time de Sustentação** (interno Capim). Todo bug, restauração de movimentação ou pedido excluído, e inconsistência de saldo passa por esse canal.
 
@@ -254,10 +256,12 @@ R: Cálculo no frontend: se o status do pedido é **Enviada para laboratório** 
 * **Sem integração automática com Controle Financeiro.** Entrada de material e valor da prótese não viram lançamentos.
 * **Sem cadastro de fornecedor.** Texto livre na Entrada.
 * **Sem cadastro de laboratório.** Texto livre na solicitação de prótese.
-* **Sem filtro por laboratório** na tela de solicitações.
+* **Sem filtro, agrupamento ou relatório por laboratório** na tela de solicitações.
+* **Lista de Estoque só busca por nome.** Sem filtro por Categoria ou Disponibilidade na tela.
 * **Sem alerta de validade próxima** no estoque. O campo Vencimento é apenas registro.
 * **Saldo de estoque pode ficar negativo:** o backend não bloqueia saídas maiores que o saldo atual.
-* **Excluir movimentação ou solicitação não é reversível pela tela.** Soft delete em prótese (recupera via eng); movimentação de estoque é exclusão dura, com reversão de saldo no momento da exclusão.
+* **Movimentação de estoque não pode ser excluída nem editada pela tela.** Correção de saldo é por movimentação compensatória; remoção do registro só via engenharia.
+* **Solicitação de prótese excluída não é recuperável pela tela.** É soft delete (recupera via eng).
 * **Card de prótese marcado como "Instalada" trava contra movimentação:** precisa desmarcar antes.
 * **A tag "Atrasado"** em pedidos enviados para laboratório é cálculo de frontend, não muda o status no banco.
 
@@ -308,9 +312,10 @@ R: Cálculo no frontend: se o status do pedido é **Enviada para laboratório** 
 * [ ] Existe alguma sinalização (visual ou em relatório) que aproxime procedimento executado e item consumido, mesmo sem ser automática?
 
 **UX da tela**
-* [ ] A UI da lista de Estoque já expõe filtro por **Categoria** e por **Disponibilidade** (o backend aceita os dois)? Ou só busca por nome?
-* [ ] Existe na UI botão de excluir movimentação de estoque (o backend tem o endpoint)?
-* [ ] Existe na UI agrupamento ou relatório por laboratório protético?
+* [x] A UI da lista de Estoque já expõe filtro por **Categoria** e por **Disponibilidade** (o backend aceita os dois)? Ou só busca por nome? **Resposta:** atualmente só busca por nome. (Alan Martins, issue #23)
+* [x] Existe na UI botão de excluir movimentação de estoque (o backend tem o endpoint)? **Resposta:** na UI não existe. (Alan Martins, issue #22)
+* [x] Existe na UI agrupamento ou relatório por laboratório protético? **Resposta:** não existe. (Alan Martins, issue #24)
+* [ ] Canal oficial para o suporte pedir remoção de uma movimentação de estoque registrada errada, já que a tela não tem botão de excluir.
 
 **Operação e correção**
 * [ ] Canal oficial para o suporte pedir restauração de solicitação de prótese excluída (soft delete via `discard`).
@@ -325,7 +330,7 @@ Itens que ainda dependem de confirmação oficial:
 
 * [ ] "Qualquer usuário autenticado da clínica consegue cadastrar item de estoque e registrar movimentação." Confirmado pelo controller (sem policy por papel), mas vale validar se há restrição no frontend.
 * [ ] "O backend permite registrar Saída maior que o saldo atual (saldo pode ficar negativo)." Confirmado pelo `CreateForm` da transação (só valida `quantity > 0`); produto pode ter regra de UI que bloqueia isso antes.
-* [ ] "Excluir movimentação de Entrada subtrai do saldo; excluir movimentação de Saída soma." Confirmado pelo `DestroyForm`. Validar se a UI hoje expõe esse botão pra clínica ou se é só endpoint interno.
+* [x] "Excluir movimentação de Entrada subtrai do saldo; excluir movimentação de Saída soma." Confirmado pelo `DestroyForm`. Validar se a UI hoje expõe esse botão pra clínica ou se é só endpoint interno. **Resposta:** na UI não existe botão de excluir movimentação; é só endpoint. (Alan Martins, issue #22)
 * [ ] "Tag 'Atrasado' no card de prótese é cálculo de frontend (compara `due_return_date`/`due_return_time` com agora)." Confirmado em `ProsthesisRequestCard.vue`. Validar se há também algum job/relatório que olha "atrasados".
 
 ### Itens já validados pelo backend (não precisa mais perguntar)

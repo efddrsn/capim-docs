@@ -1,6 +1,6 @@
 # 📘 Guia de Suporte: Configurações da clínica (estruturais)
 
-> Material para o time de suporte da Capim. Atualizado em 12/05/2026.
+> Material para o time de suporte da Capim. Atualizado em 13/11/2026.
 > Status da feature: GA. Cobre os ajustes "estruturais" da clínica em Configurações: dados cadastrais, usuários e papéis, procedimentos e migração de dados. Configurações de agenda, disponibilidade e notificações estão em guia separado. Configurações de documentos, prescrições, anamnese e maquininhas de cartão também estão em guias separados.
 
 ## 1. 🎯 Visão geral
@@ -69,8 +69,8 @@ Resolve três dores: clínica que assinou e não sabe por onde começar (migraç
 **Fluxo típico (cadastrar procedimento):**
 
 1. Vai em Configurações → Procedimentos → botão "+ Novo procedimento". Abre uma gaveta lateral.
-2. Preenche **nome** do procedimento (campo obrigatório), **valor base** (preço sugerido), **especialidade** e **plano de saúde** vinculado (opcional, da lista de planos cadastrados).
-3. ⚠️ "Plan name" e "Specialty name" são strings livres no backend, não vinculadas a uma tabela mestre de especialidades. Cada clínica cria a própria nomenclatura. 🚧 PENDENTE confirmar se a UI restringe a lista ou aceita texto livre.
+2. Preenche **nome** do procedimento (campo obrigatório), **preço** (valor sugerido), **plano** (opcional) e **especialidade** (opcional).
+3. **Especialidade é texto livre:** o campo é de digitação ("Digite a especialidade"), sem lista fechada. Cada clínica escreve a própria nomenclatura. **Plano** é escolhido na lista de planos (convênios) da clínica, com a opção "Sem plano"; se o plano não existe ainda, dá pra criar na hora pelo botão "Novo plano" dentro da própria lista.
 4. Salva. O procedimento entra no catálogo da clínica e fica disponível em Agendamento, Orçamento e Evolução.
 5. Editar: clicar no procedimento na tabela. Excluir: ícone de lixeira, com confirmação. Exclusão é soft delete (`discard`).
 6. Busca por nome no campo do topo, com debounce. Paginação na tabela.
@@ -128,9 +128,13 @@ R: Pela tela, não tem botão. O usuário foi soft-deletado (`discard`), continu
 
 R: A tela de Procedimentos tem campo de busca por **nome**. O backend aceita filtros adicionais (`health_plan_id`), mas a UI hoje só expõe a busca textual. 🚧 PENDENTE: confirmar se há filtro por especialidade exposto na UI atual.
 
-**P: A clínica perguntou se dá pra ter "salas" ou "cadeiras" cadastradas para amarrar a procedimento. Existe isso?**
+**P: A especialidade do procedimento precisa ser escolhida de uma lista?**
 
-R: **Não existe módulo de salas / cadeiras / consultórios no produto hoje.** No menu de Configurações há "Pontos de venda" (`points_of_sale`), mas isso é cadastro de **maquininhas de cartão** (com tarifas, antecipação, PIX, número de série), não de salas físicas. Não há filtro na Agenda por sala porque não existe a entidade. 🚧 PENDENTE: confirmar com produto se "salas" está no roadmap ou se nunca foi pedido.
+R: Não. Especialidade é **texto livre**: a clínica digita o que quiser. Por isso a padronização depende da própria clínica (ex.: "Ortodontia" e "Orto" viram duas especialidades diferentes). Já o **plano** é escolhido na lista de planos da clínica, e dá pra criar um plano novo ali mesmo.
+
+**P: A clínica perguntou se dá pra ter "salas" ou "cadeiras" cadastradas. Existe isso?**
+
+R: **Cadeiras, sim.** Em Configurações → Agenda → **Cadeiras** (`/#/settings/chairs`) a clínica cria, edita, ativa e desativa as cadeiras. Com cadeiras ativas, a Agenda ganha a visualização e o filtro por cadeira, e o agendamento passa a pedir a cadeira (detalhes no guia da Agenda). Ao desativar uma cadeira com agendamentos futuros, o sistema avisa quantos são e que ela deixa de receber novos agendamentos. **Não confundir** com "Pontos de venda" (`points_of_sale`), que é cadastro de **maquininhas de cartão** (tarifas, antecipação, PIX, número de série). Não existe cadastro de salas ou consultórios além das cadeiras.
 
 **P: Já cadastrei procedimentos e quero mudar todos os valores em lote. Tem como?**
 
@@ -169,7 +173,7 @@ R: Boletos e documentos são gerados no momento da emissão e ficam imutáveis d
 | "Cadastrei procedimento com valor errado e quero atualizar 50 de uma vez." | UI faz um por um. Edição em lote não está exposta. | Explicar a limitação. Oferecer caminho interno. | Escalar pra Sustentação pedindo update em massa, com a lista (idealmente planilha). |
 | "Migração tá há muito tempo em processing." | Volume grande ou falha silenciosa em job. | Confirmar status na tela de detalhe (`MigrationDetailView`). Se status ficou parado por mais de 🚧 PENDENTE horas, abrir chamado. | Escalar pra Sustentação com ID da migração e ID da clínica. |
 | "Migração ficou em partially_migrated, não sei o que falhou." | Um ou mais módulos terminaram com erro. | Olhar bloco `error_details` na tela. Se o erro for de dado (CPF inválido, paciente duplicado), orientar a clínica a corrigir e reenviar só o módulo. Se for erro técnico, escalar. | Sempre escalar erros técnicos, especialmente se a clínica está bloqueada. |
-| "A clínica quer cadastrar salas / cadeiras pra organizar a agenda." | Funcionalidade não existe no produto. | Explicar que hoje não há cadastro de salas. "Pontos de venda" são maquininhas, não salas. | Registrar como feedback de produto. |
+| "A clínica quer cadastrar salas / cadeiras pra organizar a agenda." | Cadeiras existem em Configurações → Agenda → Cadeiras. Salas ou consultórios separados não existem. | Mostrar a tela de Cadeiras e explicar que, com cadeiras ativas, o agendamento passa a exigir a cadeira. "Pontos de venda" são maquininhas, não salas. | Registrar como feedback de produto se a clínica precisar de algo além de cadeiras. |
 | "Liguei a permissão de Capininha pra split, mas Transações e Recebíveis ficaram travadas." | Comportamento esperado: split e antecipação dependem de transações e recebíveis. A UI auto-marca e trava como dependência. | Explicar a regra. Se a clínica não quer transações/recebíveis ligadas, precisa desligar split/antecipação primeiro. | Não escala. |
 | "Não vejo o bloco de permissões quando edito meu próprio usuário." | Comportamento esperado: a tela esconde o bloco quando o usuário logado é o mesmo que está sendo editado. | Pedir pra outro admin da clínica abrir o usuário e alterar permissões. | Se a clínica só tem um admin e ele se prendeu sem querer, escalar pra Sustentação pra desbloquear. |
 
@@ -181,20 +185,19 @@ R: Boletos e documentos são gerados no momento da emissão e ficam imutáveis d
 * **Edição dos demais campos da clínica depende de feature flag** (`VUE_APP_FF_CLINIC_EDIT_ENABLED`). Pode estar desligada em ambientes específicos.
 * **E-mail do usuário não é editável** depois de criado. Pra trocar, o caminho prático é criar outro usuário e deletar o anterior (ou pedir pra Sustentação).
 * **A tela de edição de usuário esconde o bloco de permissões** quando o admin está editando o próprio perfil. Outro admin precisa fazer.
-* **Não existe cadastro de salas, cadeiras ou consultórios** no produto. "Pontos de venda" no menu são maquininhas de cartão.
+* **Existe cadastro de cadeiras** (Configurações → Agenda → Cadeiras), mas **não de salas ou consultórios**. "Pontos de venda" no menu são maquininhas de cartão.
 * **Procedimentos não têm importação em massa pela UI.** Edição é um por um.
 * **Migração não tem rollback automático.** Se o módulo entra parcialmente, fica parcialmente. Correção depende de reenvio do módulo ou intervenção da Sustentação.
 * **Pacientes é módulo obrigatório na migração.** Não dá pra migrar só "outras coisas" sem migrar pacientes.
 * **Lista de softwares anteriores na migração é fixa** (Simples Dental, Dontus, Clinicorp, Dental Office, Controle Odonto, Outros). Software fora da lista cai em "Outros" e o tratamento passa a ser manual.
 * **Fluxo de migração interno (mais direto) só está disponível pra Simples Dental hoje**, e ainda atrás da flag `FF_NEW_MIGRATION_FLOW`. ✅ Validar status atual da flag.
-* **Especialidade e plano em Procedimentos podem ser texto livre** no backend. Padronização depende da disciplina da clínica.
+* **Especialidade em Procedimentos é texto livre**, sem lista padrão. Padronização depende da disciplina da clínica. O plano vem da lista de planos cadastrados.
 
 ## > 7. 🗺️ Próximos passos [opcional]
 
 * Disponibilizar edição de CNPJ, CPF e razão social via UI (com algum gating). 🚧 PENDENTE: confirmar se está no roadmap.
 * Expansão do fluxo interno de migração para outros softwares além do Simples Dental. 🚧 PENDENTE.
 * Importação em massa de procedimentos (CSV) pela UI. 🚧 PENDENTE.
-* Cadastro de salas / cadeiras / consultórios pra organizar a Agenda. 🚧 PENDENTE confirmar se existe demanda.
 
 ## > 8. 🖼️ Telas e fluxos
 
@@ -242,7 +245,7 @@ R: Boletos e documentos são gerados no momento da emissão e ficam imutáveis d
 
 **Procedimentos**
 
-* [ ] A UI restringe especialidade e plano a uma lista pré-cadastrada, ou aceita texto livre?
+* [x] A UI restringe especialidade e plano a uma lista pré-cadastrada, ou aceita texto livre? **Resposta:** aceita texto livre se necessário. Na tela atual, especialidade é campo de digitação livre e plano é escolhido na lista de planos da clínica, com botão para criar um plano novo na hora. (Alan Martins, issue #13)
 * [ ] Existe importação em massa de procedimentos via planilha pela UI?
 * [ ] Há filtro por especialidade ou plano de saúde exposto na tela de Procedimentos?
 
@@ -278,7 +281,7 @@ Fact-check feito contra `capim-dash-backend`, podem ser tratados como confirmado
 * Bloco de permissões na edição é escondido quando o usuário edita o próprio perfil.
 * Exclusão de usuário, procedimento e ponto de venda usa `discard!` (soft delete via gem `discard`).
 * Procedimento aceita campos `name`, `base_value`, `plan_name`, `specialty_name`, `health_plan_id`.
-* "Pontos de venda" (`points_of_sale`) na settings são maquininhas de cartão, com `source`, `nickname`, `serial_number`, `pix`, `card_brand_fees`, `anticipation_fee`. Não existe entidade "sala" ou "cadeira" no produto.
+* "Pontos de venda" (`points_of_sale`) na settings são maquininhas de cartão, com `source`, `nickname`, `serial_number`, `pix`, `card_brand_fees`, `anticipation_fee`. Não existe entidade "sala" no produto. Cadeiras existem e são cadastradas em Configurações → Agenda → Cadeiras (conferido no frontend em 13/11/2026).
 * Migração tem status `pending`, `processing`, `succeeded`, `failed`, `partially_migrated`. Atualização em tempo real via `MigrationProcessingChannel`.
 * Lista oficial de softwares anteriores: Simples Dental, Dontus, Clinicorp, Dental Office, Controle Odonto, Outros.
 * Módulos de migração: `patients` (obrigatório), `dentists`, `health_plans`, `procedure_types`, `time_slots`, `procedures`, `financial_control`, `annotations`.

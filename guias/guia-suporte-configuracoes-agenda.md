@@ -1,11 +1,11 @@
 # 📘 Guia de Suporte: Configurações da agenda
 
-> Material para o time de suporte da Capim. Atualizado em 12/05/2026.
+> Material para o time de suporte da Capim. Atualizado em 13/11/2026.
 > Status da feature: GA. Cobre todas as clínicas cliente, sem gating por plano.
 
 ## 1. 🎯 Visão geral
 
-Configurações da agenda é o conjunto de telas em **Configurações** que define **como a Agenda se comporta** para uma clínica: em que horário cada dentista atende, quais marcadores de cor existem para anotar consultas, em qual fuso horário a clínica opera, como as mensagens de WhatsApp saem para o paciente e como funcionam os envios automáticos de aniversário.
+Configurações da agenda é o conjunto de telas em **Configurações** que define **como a Agenda se comporta** para uma clínica: em que horário cada dentista atende, quais marcadores de cor existem para anotar consultas, em qual fuso horário a clínica opera, quais feriados estaduais e municipais aparecem na agenda, como as mensagens de WhatsApp saem para o paciente e como funcionam os envios automáticos de aniversário.
 
 Pense neste módulo como o "painel de controle" por trás do livro de marcações. Quem está aqui não está marcando consulta. Está dizendo pra Agenda o que aceitar e o que não aceitar, e definindo o que o paciente recebe de mensagem.
 
@@ -28,7 +28,8 @@ Este guia **não cobre** a Agenda em si (guia separado) nem as Configurações g
 **Onde acessar:** Menu lateral → Configurações. Dentro de Configurações, este guia trata das seções:
 
 * **Configurar disponibilidade** (URL `/#/settings/availability`): lista de dentistas com a disponibilidade de cada um.
-* **Ajustes da agenda** (URL `/#/settings/calendar`): fuso horário e marcadores.
+* **Ajustes da agenda** (URL `/#/settings/calendar`; no menu de Configurações aparece como **Agenda → Ajustes gerais**): fuso horário, feriados e marcadores.
+* **Cadeiras** (URL `/#/settings/chairs`; no menu, **Agenda → Cadeiras**): cadastro das cadeiras da clínica, que alimenta a visualização e o filtro por cadeira da Agenda. O uso das cadeiras na Agenda está descrito no guia da Agenda.
 * **Central de notificações** (URL `/#/settings/notifications`): notificações ao paciente e tela de falhas.
 * **Lembretes de aniversário** (URL `/#/settings/birthday-reminders`): configuração da mensagem automática de aniversário, integrada à Camila.
 
@@ -54,9 +55,9 @@ Define o horário de trabalho de cada dentista por dia da semana, dentro de quai
 * Para configurar **folgas pontuais** (ex: dentista de férias na próxima semana, feriado interno), a clínica usa o tipo **Bloqueio** dentro da própria Agenda, não esta tela. Esta tela cuida apenas do horário recorrente da semana.
 * Almoço também é representado como **ausência de janela** entre dois intervalos do mesmo dia, não como um campo separado de "almoço".
 
-### 2.2 Ajustes da agenda (fuso horário e marcadores)
+### 2.2 Ajustes da agenda (fuso horário, feriados e marcadores)
 
-A tela **Ajustes da agenda** em Configurações tem duas seções.
+A tela **Ajustes da agenda** em Configurações (título na tela: "Ajustes gerais") tem três seções: fuso horário, feriados e marcadores.
 
 **Fuso horário da clínica:**
 
@@ -65,13 +66,28 @@ A tela **Ajustes da agenda** em Configurações tem duas seções.
 * **Por que importa:** o fuso horário afeta como os horários dos agendamentos são exibidos e validados, e **também afeta o horário de envio das mensagens automáticas** ao paciente (1h e 24h antes da consulta saem de acordo com este fuso).
 * Se o fuso estiver errado, **toda a Agenda fica deslocada**. É a primeira coisa a checar quando o cliente reclama de "consulta aparecendo na hora errada".
 
+**Feriados:**
+
+* Seção nova que chegou junto com a agenda V2. Serve para a clínica cadastrar os **feriados estaduais e municipais** da sua região, que passam a aparecer na Agenda.
+* **Feriados nacionais não são cadastrados aqui**: eles já vêm automaticamente da Capim e aparecem na Agenda sem a clínica fazer nada.
+* Botão **Novo feriado** abre uma gaveta com três campos: **Nome do feriado** (até 60 caracteres), **Dia e mês** (formato dd/mm) e **Tipo** (Estadual ou Municipal). O feriado **se repete automaticamente todo ano** na mesma data.
+* A lista mostra Feriado, Dia e mês, Tipo e as ações **Editar** e **Excluir**.
+* **Cores na Agenda:** cada tipo de feriado aparece com uma cor própria, tanto no dia da agenda quanto no detalhe do feriado:
+  * **Nacional:** verde.
+  * **Estadual:** azul.
+  * **Municipal:** amarelo.
+* Ao clicar no feriado na Agenda, abre um detalhe com nome, data e o tipo ("Feriado nacional", "Feriado estadual" ou "Feriado municipal").
+* **Feriado não bloqueia a agenda.** Quando alguém vai criar um agendamento numa data de feriado, a Agenda mostra o aviso "Feriado identificado: A data selecionada foi definida como um feriado. Deseja agendar mesmo assim?". A pessoa pode confirmar e agendar normalmente.
+* **Excluir um feriado:** o modal avisa que o feriado deixa de se repetir a partir do ano atual e que os dias voltam a ficar disponíveis para agendamento. Os anos anteriores continuam no histórico.
+* A exibição dos feriados na Agenda respeita o toggle pessoal **Eventos de feriado** (ver seção 2.3): se o usuário desligou, não vê os feriados, nem os nacionais nem os cadastrados pela clínica.
+
 **Marcadores de calendário:**
 
 * Marcadores são **etiquetas coloridas** que a clínica cria para anotar consultas (ex: "Primeira consulta", "Urgência", "Convênio X").
 * Lista atual da clínica aparece em tabela, com botão **Adicionar marcador** no topo.
 * Ao criar marcador, escolhe **nome** (texto livre) e **cor** (a paleta tem opções como amarelo, azul claro, azul escuro, turquesa, laranja, rosa, roxo, verde claro, verde escuro, vermelho, violeta).
 * É possível **excluir** um marcador pela lista. A clínica usa esses marcadores depois dentro da Agenda, na hora de criar ou editar um agendamento, no campo "Marcador (opcional)".
-* ✅ Validar: comportamento ao excluir um marcador que **já está vinculado a agendamentos existentes**: o agendamento perde o marcador, mantém o marcador antigo registrado mas oculto, ou bloqueia a exclusão?
+* **Excluir marcador já usado em agendamentos (bug conhecido):** ao excluir, o modal de confirmação diz "Ao excluir o marcador, ele será removido também dos eventos em que foi adicionado". **Na prática isso não acontece:** o marcador some da lista em Ajustes da agenda, mas **continua aparecendo nos agendamentos** em que já tinha sido usado (teste do suporte, Alan Martins). A tela do dashboard apenas pede a exclusão do marcador ao sistema e mostra nos agendamentos os marcadores que o sistema devolve, então a correção depende da engenharia. Até lá, tratar como bug conhecido e escalar (ver seção 5).
 
 ### 2.3 Faixa visível e exibição da agenda
 
@@ -81,7 +97,7 @@ O modal de ajustes da agenda permite:
 
 * **Horário visível** (faixa): hora de início e fim que a agenda exibe no grid. Ex: 08:00 às 20:00. Marcações fora dessa faixa **acontecem normalmente no banco**, mas só ficam visíveis se o usuário aumentar a faixa, e geram o alerta "Evento fora da faixa de horário" na tentativa de marcar.
 * **Eventos de aniversário** (toggle): exibe ou oculta os aniversariantes do dia na agenda.
-* **Eventos de feriado** (toggle): exibe ou oculta feriados.
+* **Eventos de feriado** (toggle): exibe ou oculta feriados (os nacionais e os estaduais e municipais cadastrados pela clínica em Ajustes da agenda).
 * **Fins de semana** (toggle): exibe ou oculta sábado e domingo nas visualizações de semana e mês.
 
 Como é preferência por usuário, **mudar aqui não afeta os colegas da clínica**. Cada um vê do seu jeito.
@@ -130,7 +146,7 @@ Importante separar: **aniversariantes que aparecem na Agenda** (toggle de "Event
 
 * Mudar **fuso horário** com agendamentos já criados: os horários dos agendamentos existentes podem aparecer deslocados depois da troca. Avaliar com o cliente o impacto antes de mudar.
 * **Desativar a disponibilidade de um dentista** (switch "Agenda ativa?") afeta o **link público** de marcação, mas **não cancela** agendamentos já marcados na agenda dele.
-* **Excluir um marcador**: ainda precisa de validação do comportamento exato em agendamentos que já usam ele.
+* **Excluir um marcador**: apesar do aviso do modal, o marcador continua aparecendo nos agendamentos que já usavam ele (bug conhecido). Avisar o cliente que a exclusão não limpa os agendamentos antigos.
 * A **faixa visível** é por usuário, não da clínica. Cliente reclama "minha colega vê diferente", isso é esperado.
 * Toggle de **notificações** em Configurações **não apaga** lembretes que já saíram. Só afeta envios futuros do tipo desativado.
 
@@ -142,6 +158,7 @@ Importante separar: **aniversariantes que aparecem na Agenda** (toggle de "Event
 * **Caso 4, dentista vai sair de férias por 2 semanas:** o caminho correto é a clínica entrar na **Agenda** e criar um **Bloqueio** cobrindo o período, não desabilitar a disponibilidade. Bloqueio impede novas marcações no intervalo e mantém o histórico.
 * **Caso 5, paciente reclamou que não recebeu lembrete:** suporte entra em Configurações → Notificações, seção "Erro no envio de notificações", procura o paciente nas falhas dos últimos 7 dias. Se aparecer, clica em Reenviar ou orienta a clínica a fazer. Se não aparecer, checa o cadastro do paciente (celular válido) e se o evento estava ativo no momento da consulta.
 * **Caso 6, clínica quer ligar o envio automático de mensagem de aniversário:** admin entra em Lembretes de aniversário, completa a configuração da Camila (conectar WhatsApp, modelo de mensagem, ativar envios).
+* **Caso 7, clínica de São Paulo quer que o 9 de julho apareça na agenda:** admin entra em Ajustes da agenda → Feriados → Novo feriado, preenche "Revolução Constitucionalista", 09/07, tipo Estadual, e salva. O feriado aparece em azul na Agenda todo ano nessa data. Quem tentar marcar consulta nesse dia vê o aviso de feriado, mas pode confirmar e agendar.
 
 ## > 4. ❓ FAQ
 
@@ -181,6 +198,22 @@ R: Não. **O canal é exclusivamente WhatsApp.** Se o paciente não tem WhatsApp
 
 R: Configurações → Ajustes da agenda → Adicionar marcador. Escolhe nome e cor. Salva. Aí o marcador aparece como opção dentro do agendamento, no campo "Marcador (opcional)".
 
+**P: Excluí um marcador e ele continua aparecendo nos agendamentos. É normal?**
+
+R: Não é o esperado, é um **bug conhecido**. O modal de exclusão promete que o marcador sai também dos eventos, mas hoje ele continua aparecendo nos agendamentos em que já estava. O marcador some da lista e não pode mais ser escolhido em agendamentos novos. Nos agendamentos antigos, vale tentar editar o agendamento e retirar o marcador manualmente. De qualquer forma, escalar para o Time de Sustentação com ID da clínica, nome do marcador e um agendamento de exemplo.
+
+**P: Como cadastro um feriado da minha cidade ou do meu estado?**
+
+R: Configurações → Ajustes da agenda → seção Feriados → **Novo feriado**. Preencher nome, dia e mês (dd/mm) e tipo (Estadual ou Municipal). O feriado se repete todo ano e aparece na Agenda: estadual em azul, municipal em amarelo. Feriados nacionais já vêm prontos (em verde) e não precisam ser cadastrados.
+
+**P: O feriado impede que a clínica marque consulta naquele dia?**
+
+R: Não. A Agenda só avisa ("Feriado identificado... Deseja agendar mesmo assim?") e deixa a pessoa confirmar. Se a clínica não vai atender, o caminho para impedir marcações continua sendo criar um **Bloqueio** na Agenda.
+
+**P: Cadastrei um feriado e ele não aparece na Agenda. Por quê?**
+
+R: Verificar, em ordem: (1) o toggle pessoal **Eventos de feriado** nos ajustes da própria Agenda está ligado? Ele esconde todos os feriados quando está desligado. (2) A data cadastrada (dia e mês) está certa? (3) Recarregar a Agenda (F5). Se mesmo assim não aparece, escalar com ID da clínica e nome do feriado.
+
 **P: Onde configuro a mensagem automática de aniversário?**
 
 R: Configurações → Lembretes de aniversário. Essa tela é da Camila (vem embarcada como iframe no dashboard). Lá a clínica conecta WhatsApp, escolhe modelo de mensagem e ativa os envios automáticos.
@@ -209,7 +242,10 @@ R: Não é o caminho mais limpo. Desativar a disponibilidade afeta principalment
 | "O paciente não recebeu o lembrete." | Cadastro sem celular válido, evento desligado em Notificações, ou falha do provedor. | Conferir cadastro → conferir toggle em Notificações → entrar em "Erro no envio de notificações" e procurar o paciente nas falhas dos últimos 7 dias. Se aparecer, reenviar. | Escalar pra eng se o paciente aparece nas falhas com motivo não trivial e a clínica precisa do registro. |
 | "Aniversariantes não aparecem na agenda." | Toggle de "Eventos de aniversário" do usuário está desligado nos ajustes da própria Agenda. | Pedir pra ligar o toggle no botão de ajustes da Agenda (não em Configurações). | Não costuma precisar. |
 | "Mensagem automática de aniversário não está saindo." | Configuração da tela Lembretes de aniversário incompleta (WhatsApp não conectado, envios não ativados). | Conferir Configurações → Lembretes de aniversário. Verificar se a Camila está conectada e os envios estão ativos. | Escalar pro time da Camila se a clínica disser que está tudo conectado e mesmo assim não sai. |
-| "Tentei excluir um marcador e dá erro." | 🚧 Comportamento da exclusão quando o marcador já está em uso ainda precisa ser confirmado. | Pedir print do erro, ID do marcador, ID da clínica. | Escalar pra eng. |
+| "Tentei excluir um marcador e dá erro." | Falha na exclusão (a tela mostra "Não foi possível excluir o marcador, tente novamente."). | Pedir pra tentar de novo. Se persistir, coletar print do erro, nome do marcador e ID da clínica. | Escalar pra eng se o erro se repete. |
+| "Excluí o marcador, mas ele continua nos agendamentos." | Bug conhecido: a exclusão não remove o marcador dos agendamentos que já o usavam, apesar do aviso do modal. | Explicar que é um problema conhecido. Sugerir tentar editar os agendamentos importantes e retirar o marcador manualmente. | Escalar para o Time de Sustentação com ID da clínica, nome do marcador e um agendamento de exemplo. |
+| "Cadastrei o feriado e ele não aparece na Agenda." | Toggle pessoal "Eventos de feriado" desligado, data cadastrada errada, ou agenda carregada antes do cadastro. | Pedir pra ligar o toggle nos ajustes da Agenda, conferir dia e mês na lista de Feriados e recarregar a página. | Se tudo confere e não aparece, escalar com ID da clínica e nome do feriado. |
+| "Não consigo marcar consulta no feriado." | A Agenda mostra o aviso "Feriado identificado", mas não bloqueia. | Orientar a clicar em Confirmar no aviso para seguir com o agendamento. | Não costuma precisar. |
 | "A faixa de horário visível mudou sozinha." | A faixa é por usuário e pode ter sido alterada em outro navegador ou sessão. | Pedir pra abrir a Agenda → botão de ajustes → reajustar horário visível. | Não costuma precisar. |
 
 **Para quem escalar:** **Time de Sustentação** (canal interno Capim). Toda issue de bug, ativação de feature ou comportamento inconsistente em Configurações da agenda entra por esse canal.
@@ -224,11 +260,15 @@ R: Não é o caminho mais limpo. Desativar a disponibilidade afeta principalment
 * **A lista de falhas é dos últimos 7 dias.** Falhas mais antigas não aparecem na tela.
 * **Disponibilidade da semana é recorrente.** Folga pontual não fica aqui, fica como Bloqueio dentro da Agenda.
 * **Almoço não é campo separado**, e sim o intervalo entre duas janelas do mesmo dia.
+* **Excluir marcador não limpa os agendamentos antigos** (bug conhecido): o marcador continua aparecendo nos eventos em que já estava.
+* **Feriados só estaduais e municipais são cadastráveis.** Os nacionais vêm prontos da Capim. Feriado cadastrado se repete todo ano na mesma data (não há feriado de data móvel nem feriado de um ano só).
+* **Feriado avisa, mas não bloqueia** a marcação. Para fechar a agenda no dia, usar Bloqueio.
 * **Lembretes de aniversário** vivem na aplicação da Camila (iframe). O dashboard só embarca a tela, não controla o detalhe fino.
 * **"Lembretes de retorno"** (chamar paciente inativo) **não foram encontrados** como módulo dentro de Configurações da agenda. Se a clínica perguntar, escalar pra produto para confirmar se existe e onde.
 
 ## > 7. 🗺️ Próximos passos [opcional]
 
+* Correção do bug de exclusão de marcador (o marcador deveria sair também dos agendamentos, como o modal promete). 🚧 PENDENTE: confirmar com eng a previsão.
 * 🚧 PENDENTE: roadmap de novos canais de notificação (SMS, e-mail) ou se a posição é manter WhatsApp como único canal.
 * 🚧 PENDENTE: roadmap de horários configuráveis pela clínica para os lembretes (hoje 1h e 24h são fixos).
 * 🚧 PENDENTE: roadmap de "lembretes de retorno" automáticos (paciente que não volta há X meses), se existe.
@@ -242,6 +282,10 @@ R: Não é o caminho mais limpo. Desativar a disponibilidade afeta principalment
 [INSERIR PRINT: Ajustes da agenda em Configurações com seletor de fuso horário e lista de marcadores]
 
 [INSERIR PRINT: drawer "Adicionar marcador" com campo nome e seletor de cor]
+
+[INSERIR PRINT: seção Feriados em Ajustes da agenda, com a gaveta "Novo feriado" aberta]
+
+[INSERIR PRINT: Agenda com feriado nacional (verde), estadual (azul) e municipal (amarelo)]
 
 [INSERIR PRINT: modal de ajustes da Agenda mostrando Horário visível, Eventos de aniversário, Eventos de feriado e Fins de semana]
 
@@ -259,7 +303,12 @@ R: Não é o caminho mais limpo. Desativar a disponibilidade afeta principalment
 * [ ] Confirmar se Disponibilidade, Marcadores, Notificações e Lembretes de aniversário também são restritos a admin, ou se qualquer usuário interno pode editar.
 
 **Marcadores**
-* [ ] Comportamento ao excluir um marcador que já está em uso em agendamentos existentes: o agendamento perde o marcador, mantém oculto, ou bloqueia a exclusão?
+* [x] Comportamento ao excluir um marcador que já está em uso em agendamentos existentes: o agendamento perde o marcador, mantém oculto, ou bloqueia a exclusão? **Resposta:** o modal diz que o marcador será removido também dos eventos, mas no teste do suporte isso não aconteceu: o marcador continuou aparecendo no agendamento. Tratar como bug conhecido e escalar. No código do dashboard (13/11/2026) a tela só pede a exclusão ao sistema, sem limpeza própria, então a correção é da engenharia. (Alan Martins, issue #9)
+* [ ] O bug de exclusão de marcador (marcador continua nos agendamentos) já tem correção prevista?
+
+**Feriados**
+* [ ] Quem pode cadastrar, editar e excluir feriados: só admin ou qualquer usuário? (a tela não mostra trava de admin)
+* [ ] O toggle "Eventos de feriado" também esconde o aviso "Feriado identificado" na hora de agendar, ou o aviso aparece sempre?
 
 **Notificações**
 * [ ] Existe alguma forma de a clínica consultar falhas mais antigas que 7 dias?

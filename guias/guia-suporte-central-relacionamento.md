@@ -1,6 +1,6 @@
 # 📘 Guia de Suporte: Central de Relacionamento
 
-> Material para o time de suporte da Capim. Atualizado em 12/05/2026.
+> Material para o time de suporte da Capim. Atualizado em 13/11/2026.
 > Status da feature: GA, controlada por feature flag `FF_DEALS_ENABLED` no backend (sem flag, os deals nem são criados automaticamente). 🚧 PENDENTE: confirmar se essa flag está hoje em 100% das clínicas ou se ainda há gating por clínica.
 
 ## 1. 🎯 Visão geral
@@ -78,7 +78,10 @@ Tentar arrastar pra uma coluna não permitida: o drag não conclui, o card volta
 **Filtros disponíveis na visão de pipeline:**
 
 * **Por paciente**: campo de busca no topo da tela do pipeline (selecionar paciente já cadastrado).
-* **Período padrão fixo**: o frontend pede sempre os últimos 14 dias retroativos + 14 dias à frente (no pipeline de Desmarcados) ou últimos 14 dias até hoje (no pipeline de Faltas). **A clínica não tem seletor de período na tela**. ✅ Validar com produto se essa janela é fixa por design ou se é evolução pendente.
+* **Período padrão fixo**: a tela pede sempre os últimos 14 dias retroativos + 14 dias à frente (no pipeline de Desmarcados) ou os últimos 14 dias até hoje (no pipeline de Faltas). O período aparece no canto direito da tela, em "Resultados para o período: De dd/mm/aaaa a dd/mm/aaaa". **A clínica não tem seletor de período na tela.**
+  * Onde isso é definido: o período é fixo no próprio código da tela do pipeline no dashboard (`src/views/dealPipelines/ShowView.vue` no `capim-dash-frontend`), calculado a partir da data de hoje no momento em que a tela é aberta. Não é configuração da clínica nem do usuário, então nem o suporte consegue mudar.
+  * **A busca por paciente também respeita essa janela.** Buscar o nome do paciente não traz cards fora do período: a busca só filtra dentro dos mesmos 14 dias (ou 14 + 14).
+  * Se a janela é escolha de produto ou limitação técnica ainda não está confirmado (ver Lacunas).
 * **Não há filtro** por dentista, por origem do agendamento, por responsável pela recuperação, por estágio.
 
 **⚠️ Atenção:**
@@ -108,7 +111,7 @@ R: Hoje **não dá**. Os cards só nascem automaticamente quando um agendamento 
 
 **P: O paciente recusou um agendamento, mas o card não apareceu na Central. Por quê?**
 
-R: Checar nessa ordem: (1) A flag `FF_DEALS_ENABLED` está ativa pra essa clínica? Sem ela o backend nem cria o card. (2) O agendamento tinha paciente vinculado? Time slot sem paciente não gera card. (3) O status real do time slot na Agenda é "Cancelado" (e não só "Pendente" sumindo da grid)? (4) A janela de período da tela é os últimos 14 dias retroativos: se o agendamento original era de mais de 14 dias atrás, pode ter saído da visão. Pra confirmar, buscar pelo nome do paciente no filtro da própria tela.
+R: Checar nessa ordem: (1) A flag `FF_DEALS_ENABLED` está ativa pra essa clínica? Sem ela o backend nem cria o card. (2) O agendamento tinha paciente vinculado? Time slot sem paciente não gera card. (3) O status real do time slot na Agenda é "Cancelado" (e não só "Pendente" sumindo da grid)? (4) A janela de período da tela é fixa (últimos 14 dias, e mais 14 dias à frente em Desmarcados): se o agendamento original está fora desse período, o card não aparece. **Buscar pelo nome do paciente não resolve**, porque a busca também fica presa à mesma janela. Conferir as datas em "Resultados para o período" no canto da tela.
 
 **P: Por que tem dois pipelines parecidos? Qual a diferença entre Faltas e Desmarcados?**
 
@@ -147,7 +150,7 @@ R: **Não existe hoje.** O modelo de dados do card tem só: paciente, dentista, 
 | Sintoma (o que o usuário relata) | Causa provável | O que o suporte faz | Quando escalar |
 |---|---|---|---|
 | "Não vejo o menu Central de relacionamento." | Clínica sem a flag `FF_DEALS_ENABLED`, ou clínica de rede sem assinatura, ou submenu Comunicação fechado. | Tentar abrir pela URL direta `/communication/deal_pipelines`. Se carregar, é o menu colapsado. Se não carregar, é a flag ou o tipo de clínica. | Se a clínica é cliente pagante e a flag deveria estar ligada, escalar pedindo ativação com ID da clínica. |
-| "Cancelei um agendamento e o card não apareceu na Central." | Flag desligada, agendamento sem paciente vinculado, agendamento antigo (fora da janela de 14 dias) ou job de criação ainda não rodou. | Confirmar status real do agendamento na Agenda. Buscar pelo paciente no filtro da Central. Se nada, esperar alguns segundos e recarregar (o job é assíncrono). | Se o agendamento atende todos os critérios e o card não aparece após alguns minutos, escalar com ID do clinic, ID do time_slot e horário do cancelamento. |
+| "Cancelei um agendamento e o card não apareceu na Central." | Flag desligada, agendamento sem paciente vinculado, agendamento antigo (fora da janela de 14 dias) ou job de criação ainda não rodou. | Confirmar status real do agendamento na Agenda e se a data dele está dentro do período mostrado em "Resultados para o período". Buscar pelo paciente no filtro da Central (lembrando que a busca só olha dentro da mesma janela). Se nada, esperar alguns segundos e recarregar (o job é assíncrono). | Se o agendamento atende todos os critérios e o card não aparece após alguns minutos, escalar com ID do clinic, ID do time_slot e horário do cancelamento. |
 | "Arrastei um card e ele voltou pra coluna original sem aviso." | Transição não permitida (regras de fluxo) ou erro de rede no PATCH do estágio. | Conferir se a transição pretendida é permitida (ver tabela em "Como funciona"). Se for permitida e ainda assim falhar, pedir pra recarregar e tentar de novo. | Se transição permitida falha consistentemente, escalar com ID da clínica, ID do card e estágio origem/destino. |
 | "Movi um card pra 'Remarcado' mas a gaveta de agendamento não abriu." | Conflito com outro modal, erro de carregamento de dentistas ou erro no carregamento do paciente padrão. | Recarregar a página, refazer o movimento. Pedir print do console se possível. | Sempre escalar pra eng se acontece mais de uma vez. |
 | "Movi pra 'Compareceu' e o paciente não aparece como atendido na Agenda." | A atualização vai pra um time_slot específico (o original do card). Se a clínica esperava que isso refletisse no agendamento remarcado, é confusão de fluxo. | Explicar: o card aponta pro agendamento original. Marcar "Compareceu" no card marca presença no agendamento original, não no novo. | Escalar só se há divergência real entre o card e o time_slot original (`attended` não bateu). |
@@ -163,7 +166,7 @@ R: **Não existe hoje.** O modelo de dados do card tem só: paciente, dentista, 
 * **Cards não são criados manualmente.** Só por gatilho automático a partir da Agenda (cancelamento ou falta).
 * **Sem campo de valor, origem, responsável.** O card carrega só paciente, dentista, data do agendamento, anotação livre e estágio.
 * **Sem filtro por dentista, por origem, por estágio ou por responsável.** Só filtro por paciente.
-* **Janela de período fixa em código** (14 dias retroativos + 14 dias à frente em Desmarcados; 14 dias retroativos em Faltas). Sem seletor na tela.
+* **Janela de período fixa em código** (14 dias retroativos + 14 dias à frente em Desmarcados; 14 dias retroativos em Faltas). Sem seletor na tela, e a busca por paciente também fica presa a essa janela. Cards mais antigos continuam existindo, mas não aparecem na tela.
 * **Sem visão "por responsável" ou divisão entre recepcionistas.** Qualquer usuário da clínica vê e mexe em todos os cards.
 * **Transições de estágio bloqueadas sem mensagem clara.** Drag inválido só "não solta", sem toast explicativo.
 * **Reversão de exclusão não existe na interface.** Só engenharia consegue restaurar.
@@ -205,7 +208,7 @@ R: **Não existe hoje.** O modelo de dados do card tem só: paciente, dentista, 
 * [ ] Quando o agendamento original é restaurado por engenharia (reativado), o card existente é descartado automaticamente? (Pelo código, sim: `DiscardOriginatedDeal` roda quando o time_slot deixa de estar cancelado, mas validar na prática.)
 
 **Filtros e visões**
-* [ ] A janela de período (14 dias retroativos + 14 à frente) é por design ou é evolução pendente?
+* [ ] A janela de período (14 dias retroativos + 14 à frente) é por design ou é evolução pendente? **O que se sabe até agora:** Alan acredita que foi um empecilho técnico na época, não uma escolha de produto, mas não consegue confirmar porque as pessoas que fizeram a tela saíram da Capim. No código (conferido em 13/11/2026), a janela é fixa na tela do pipeline (`src/views/dealPipelines/ShowView.vue`): hoje menos 14 dias até hoje mais 14 dias em Desmarcados, e hoje menos 14 dias até hoje em Faltas, e a busca por paciente usa a mesma janela. Falta confirmar com produto/eng se dá pra ampliar ou criar seletor de período. (Alan Martins, issue #10)
 * [ ] Há previsão de filtro por dentista, por responsável, ou por estágio?
 
 **Customização**

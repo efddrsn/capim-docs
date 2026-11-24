@@ -1,0 +1,287 @@
+{
+  "slug": "leo",
+  "agente": "Leo",
+  "nome": "Agente de vendas (O Algoritmo): guia CaPlus Motor 2, discovery de mai/2026 e trechos das RAGs citados no Slack. As RAGs completas não estão compartilhadas com a Capim.",
+  "origem_url": "https://capimworkspace.slack.com/archives/C0B11M13004",
+  "gerado_em": "24/11/2026",
+  "itens": [
+    {
+      "id": "leo-001",
+      "guia": "maquininha",
+      "tema": "Aluguel da maquininha: faixa de isenção",
+      "tipo": "so_no_agente",
+      "severidade": "alta",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Decisão da Capim (Pedro, 17/11): aluguel isento acima de R$ 7 mil/mês e R$ 69,90 abaixo disso (na Black November, sem aluguel até o Carnaval).",
+        "ref": "RAG de produtos e de dúvidas (citado no Slack, 17/11/2026)",
+        "url": "https://capimworkspace.slack.com/archives/C0B11M13004/p1794920140208349"
+      },
+      "nota": "Responde lacuna do guia: o guia confirma R$ 69,90/mês, mas marca a regra de isenção como 🚧 PENDENTE. Antes, as RAGs diziam \"sem aluguel para quem passa mais de R$ 5 mil por mês\"; o CaPlus Motor 2 (09/11) também usa R$ 5.000 (\"Cobrado só se TPV < R$ 5.000\"), e o discovery de mai/2026 permite oferecer até 3 meses de isenção. Ver também cla-pos-001 (Claudinha: R$ 10 mil). Definir o valor oficial e alinhar o CaPlus."
+    },
+    {
+      "id": "leo-002",
+      "guia": "maquininha",
+      "tema": "Credenciamento: tempo mínimo de CRO",
+      "tipo": "conflito",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "Os motivos possíveis são: CNPJ com restrição, sócios com restrição, técnico responsável com restrição, empresa recém-aberta, … CRO com menos de 1 ano, RT diferente do RL e CNAE secundário de odontologia.",
+        "secao": "4-faq",
+        "ref": "Maquininha · 4. FAQ"
+      },
+      "agente": {
+        "texto": "Decisão da Capim (Pedro, 17/11): credenciamento com CRO de 6 meses e CNPJ de 2 meses.",
+        "ref": "RAG de produtos (citado no Slack, 17/11/2026)",
+        "url": "https://capimworkspace.slack.com/archives/C0B11M13004/p1794920140208349"
+      },
+      "nota": "O guia (código) recusa CRO com menos de 1 ano; a decisão aceita 6 meses. Antes, a RAG de produtos dizia \"CRO ativo há pelo menos 6 meses\" e a RAG de motivos de perda, \"pelo menos 1 ano\" (igual ao guia). Ver também cla-pos-012. Se a regra mudou para 6 meses, o motivo de recusa no sistema precisa mudar junto."
+    },
+    {
+      "id": "leo-003",
+      "guia": "maquininha",
+      "tema": "Credenciamento: tempo mínimo de CNPJ",
+      "tipo": "so_no_agente",
+      "severidade": "alta",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Decisão da Capim (Pedro, 17/11): credenciamento com CRO de 6 meses e CNPJ de 2 meses.",
+        "ref": "RAG de produtos (citado no Slack, 17/11/2026)",
+        "url": "https://capimworkspace.slack.com/archives/C0B11M13004/p1794920140208349"
+      },
+      "nota": "O guia só lista \"empresa recém-aberta\" como motivo de recusa, sem dizer a partir de quando. A Claudinha diz \"CNPJ com menos de quatro meses: análise manual e possível comitê\" (ver cla-pos-011 e cla-cred-011). Três números para o mesmo corte (2 meses no Leo, 4 na Claudinha, nenhum no guia)."
+    },
+    {
+      "id": "leo-004",
+      "guia": "configuracoes-clinica",
+      "tema": "Migração de dados: prazo e automação",
+      "tipo": "conflito",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "Para Simples Dental existe o fluxo interno mais direto (atrás da flag `FF_NEW_MIGRATION_FLOW`). Para os demais, o caminho passa pelo fluxo padrão de orquestração (`SetupOrchestrationComponent`) que costuma exigir mais coleta de informação por parte do time interno.",
+        "secao": "4-faq",
+        "ref": "Configurações da clínica · 4. FAQ"
+      },
+      "agente": {
+        "texto": "Decisão da Capim (Pedro, 17/11): migração automática, em minutos.",
+        "ref": "RAG de dúvidas e de produtos (citado no Slack, 17/11/2026)",
+        "url": "https://capimworkspace.slack.com/archives/C0B11M13004/p1794920140208349"
+      },
+      "nota": "Pelo guia, só o Simples Dental tem fluxo direto (e atrás de flag); os outros sistemas dependem do time interno, \"Outros\" vira tratamento manual, e volumes grandes podem ficar horas em \"processing\" (SLA 🚧 PENDENTE). Antes, as RAGs diziam \"até 5 dias úteis\" e \"em média 7 dias\"; o discovery de mai/2026 dizia 8 a 15 dias (mesmo dia para Simples Dental). Ver também cla-saas-006. Prometer \"minutos\" para qualquer sistema parece arriscado."
+    },
+    {
+      "id": "leo-005",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: paciente menor de idade",
+      "tipo": "conflito",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "Na simulação V2, marcar o checkbox \"Paciente é menor de idade\" (`underage`). … Quem assume o contrato é o responsável, não o menor.",
+        "secao": "4-faq",
+        "ref": "Financiamento Capim · 4. FAQ"
+      },
+      "agente": {
+        "texto": "Decisão da Capim (Pedro, 17/11): Financiamento proíbe menores de 18 anos.",
+        "ref": "RAG de dúvidas e objeções (citado no Slack, 17/11/2026)",
+        "url": "https://capimworkspace.slack.com/archives/C0B11M13004/p1794920140208349"
+      },
+      "nota": "O guia tem fluxo para tratamento de menor: o responsável adulto assume o contrato. Do jeito que está, o Leo vai dizer que menor não pode ser financiado. Antes, a RAG de dúvidas dizia \"menor de idade não é aprovado (18 anos)\" e a de produtos, \"menos de 22 anos não é aprovado\". Ver também cla-cred-016. Esclarecer na RAG que o menor pode, via responsável."
+    },
+    {
+      "id": "leo-006",
+      "guia": null,
+      "tema": "Suporte e treinamentos: horários",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Decisão da Capim (Pedro, 17/11): suporte também aos sábados, das 8h às 16h; treinamentos às 11h (sistema) e às 17h (Financiamento).",
+        "ref": "RAGs (citado no Slack, 17/11/2026)",
+        "url": "https://capimworkspace.slack.com/archives/C0B11M13004/p1794920140208349"
+      },
+      "nota": "Nenhum guia traz horário do suporte geral nem dos treinamentos. Antes, as RAGs diziam \"segunda a sexta, das 8h às 20h, e também no sábado, das 8h às 16h. Treinamento ao vivo todos os dias da semana\"; o discovery de mai/2026 já citava 11h e 17h. Cuidado: o guia do Capix diz que o código corta o Capix às 14h no sábado (o texto da tela diz 16h)."
+    },
+    {
+      "id": "leo-007",
+      "guia": "maquininha",
+      "tema": "Taxas da maquininha: regras de proposta do CaPlus",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Pix fica fora do cálculo do TR e é sempre proposto ao custo (0,50%).",
+        "ref": "CaPlus Motor 2 (guia de regras, 09/11/2026)",
+        "url": "https://capimworkspace.slack.com/archives/C0B11M13004"
+      },
+      "nota": "O guia só diz que cada clínica tem a sua taxa (\"A Capim não publica taxa fixa\"). O CaPlus define a proposta por faixa de TPV, com piso por modalidade, Pix a 0,50%, RAV do spot que \"nunca é renegociado\" e no máximo 3 rodadas de desconto. Compatível com o guia; dado sigiloso, o agente só mostra a tabela final."
+    },
+    {
+      "id": "leo-008",
+      "guia": "maquininha",
+      "tema": "Entrega da maquininha: prazos de envio e entrega",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Prazo de Envio da Maquininha e geração do Código de Rastreio: 2 a 3 dias úteis após solicitação via Capim Dash … São Paulo capital - Até 5 dias … Norte/ Nordeste - 25 dias aproximadamente",
+        "ref": "Discovery do Agente de Atendimento (Algoritmo/Capim, mai/2026)",
+        "url": "https://docs.google.com/document/d/1GFp4xXIrNxA6_b8NcOjMwxKJpua0PxERFGcXWz5qcUM/edit"
+      },
+      "nota": "Responde lacuna do guia (SLA de entrega 🚧 PENDENTE). Fonte de mai/2026: confirmar se segue valendo. O guia de Maquininha diz que não há tela com código de rastreio; o de Início (13/11) mostra um banner com rastreio."
+    },
+    {
+      "id": "leo-009",
+      "guia": "financiamento-capim",
+      "tema": "Credenciamento do Financiamento: prazo de liberação",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Prazo para liberação do Financiamento após envio das documentações de credenciamento: 24h úteis quando não houver pendência de documentos",
+        "ref": "Discovery do Agente de Atendimento (Algoritmo/Capim, mai/2026)",
+        "url": "https://docs.google.com/document/d/1GFp4xXIrNxA6_b8NcOjMwxKJpua0PxERFGcXWz5qcUM/edit"
+      },
+      "nota": "O guia não dá prazo de análise do credenciamento (no de Maquininha, o SLA de análise é 🚧 PENDENTE). Fonte de mai/2026: confirmar se segue valendo."
+    },
+    {
+      "id": "leo-010",
+      "guia": null,
+      "tema": "Plano SaaS: cancelamento e fidelidade",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "O cliente pode cancelar seu plano Mensal com a Capim a qualquer momento, sem fidelidade. … No caso do Anual à vista o valor do ano é pago integralmente no início do uso da plataforma e não realizamos estorno do período pago … No caso do Anual parcelado o valor é cobrado do cartão do cliente mês a mês e continua durante o período contrato de 12 meses mesmo após solicitação de cancelamento.",
+        "ref": "Discovery do Agente de Atendimento (Algoritmo/Capim, mai/2026)",
+        "url": "https://docs.google.com/document/d/1GFp4xXIrNxA6_b8NcOjMwxKJpua0PxERFGcXWz5qcUM/edit"
+      },
+      "nota": "O capim-docs deixa o plano de assinatura fora de escopo de propósito (_resumo-geral). Fonte de mai/2026. Ver também cla-saas-002: a Claudinha cita arrependimento em 7 dias, que o Leo não menciona."
+    },
+    {
+      "id": "leo-011",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: Capim paga o valor cheio e assume a cobrança",
+      "tipo": "so_no_docs",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "a clínica oferece o financiamento ao paciente, a Capim faz a análise de crédito, paga o valor cheio do tratamento pra clínica e fica responsável por cobrar o paciente em parcelas.",
+        "secao": "1-visao-geral",
+        "ref": "Financiamento Capim · 1. Visão geral"
+      },
+      "agente": null,
+      "nota": "A base do Leo só fala do Financiamento em CRO, idade e prazo de credenciamento. Não explica o que o produto faz: valor cheio para a clínica, risco e cobrança com a Capim."
+    },
+    {
+      "id": "leo-012",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: repasse exige \"Solicitar pagamento\"",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "A clínica **não recebe automaticamente no momento da aprovação do contrato**. O fluxo é: paciente assina (`contract_sign`) → clínica precisa clicar em \"Solicitar pagamento\" no card do contrato",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Financiamento Capim · 2. Como funciona"
+      },
+      "agente": null,
+      "nota": "Evita o vendedor prometer dinheiro automático na aprovação. Ver também cla-cred-013."
+    },
+    {
+      "id": "leo-013",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: contraproposta e validade da análise",
+      "tipo": "so_no_docs",
+      "severidade": "baixa",
+      "capim_docs": {
+        "texto": "**Existe um caminho \"Contraproposta\"**: se o paciente não é elegível pro valor pedido, a Capim pode oferecer um valor menor.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Financiamento Capim · 2. Como funciona"
+      },
+      "agente": null,
+      "nota": "O Leo não sabe que a aprovação pode vir com valor menor nem que pré-análise e simulação expiram em 15 dias."
+    },
+    {
+      "id": "leo-014",
+      "guia": "maquininha",
+      "tema": "Maquininha: um aparelho por credenciamento",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**Quantidade na ordem é fixa em 1 aparelho** por credenciamento (`POS_QUANTITY = 1`). Não existe fluxo de pedido de aparelho adicional pela tela.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Maquininha · 2. Como funciona"
+      },
+      "agente": null,
+      "nota": "Clínica com várias salas pode pedir mais de uma maquininha na venda. Ver também cla-pos-017."
+    },
+    {
+      "id": "leo-015",
+      "guia": "maquininha",
+      "tema": "Maquininha: saque sempre do saldo total",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "O **valor do saque é fixo no saldo total**: o campo de valor vem **desabilitado** e preenchido com todo o saldo disponível. **Não dá pra sacar valor parcial pela tela**.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Maquininha · 2. Como funciona"
+      },
+      "agente": null,
+      "nota": "O Leo fala de D+1 e antecipação, mas não do saldo e do saque (mínimo R$ 5). Ver também cla-pos-013."
+    },
+    {
+      "id": "leo-016",
+      "guia": "maquininha",
+      "tema": "Maquininha: estorno de cartão e chargeback sem autosserviço",
+      "tipo": "so_no_docs",
+      "severidade": "baixa",
+      "capim_docs": {
+        "texto": "**Estorno de cartão não tem fluxo pela UI**. Só Pix tem o botão \"Estornar Pix\", e mesmo esse botão **não estorna direto**",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Maquininha · 2. Como funciona"
+      },
+      "agente": null,
+      "nota": "Comparação comum com Stone/Cielo na venda: estorno de cartão e chargeback passam pelo suporte, sem tela."
+    },
+    {
+      "id": "leo-017",
+      "guia": "simulador-vendas",
+      "tema": "Simulador de vendas: repasse da taxa e acesso",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**Para quem é:** clínicas Capim que já possuem a maquininha (Capininha). O acesso à tela é bloqueado quando a clínica ainda não tem um pedido de maquininha com status `delivered` (entregue) ou `sent` (enviada).",
+        "secao": "1-visao-geral",
+        "ref": "Simulador de vendas · 1. Visão geral"
+      },
+      "agente": null,
+      "nota": "O Leo não conhece o simulador: repasse da taxa ao paciente, crédito em até 21x e as taxas reais da clínica. Só abre com maquininha enviada ou entregue."
+    },
+    {
+      "id": "leo-018",
+      "guia": "capix",
+      "tema": "Capix: o que é e limites",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "o paciente paga **uma entrada via Pix** e o **restante em parcelas via Pix** (de 1 a 4), e a **Capim adianta para a clínica** o valor a receber em até 1 dia útil depois que a contratação é concluída.",
+        "secao": "1-visao-geral",
+        "ref": "Capix · 1. Visão geral"
+      },
+      "agente": null,
+      "nota": "A base do Leo não tem nada de Capix: não pode ser chamado de crédito, valor de R$ 100 a R$ 1.000, paciente maior de idade, habilitado clínica a clínica pelo Time de Riscos."
+    },
+    {
+      "id": "leo-019",
+      "guia": "carne-boleto",
+      "tema": "Carnê: inadimplência fica com a clínica",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Quem assume o risco da inadimplência é a **clínica**, não a Capim: se o paciente não pagar, é a clínica que perde.",
+        "secao": "1-visao-geral",
+        "ref": "Carnê Capim e Boleto · 1. Visão geral"
+      },
+      "agente": null,
+      "nota": "A base do Leo não tem Carnê. Na venda, é fácil confundir com o Financiamento, em que o risco é da Capim. A UI cobra R$ 1,99 por boleto pago e aceita até 36 parcelas. Ver também cla-cred-017."
+    }
+  ]
+}

@@ -183,6 +183,74 @@
     });
   }
 
+
+  // ---- Divergências (/divergencias) ----
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.div-resolve');
+    if (!btn) return;
+    const li = btn.closest('.div-item');
+    const id = li.dataset.id;
+    const resolucao = btn.dataset.res;
+    const precisaResposta = resolucao === 'outro';
+    openModal({
+      title: btn.dataset.label,
+      ctx: `${li.dataset.tema}\nAgente: ${li.dataset.fonteNome} · id ${id}`,
+      fields: [
+        {
+          name: 'resposta',
+          label: precisaResposta ? 'Qual é a informação certa? (obrigatório)' : 'Observação ou fonte (opcional)',
+          type: 'textarea',
+          required: precisaResposta,
+          placeholder: precisaResposta
+            ? 'Escreva a regra correta e, se possível, quem confirmou.'
+            : 'Ex.: confirmado com o PM; regra mudou em nov/26.',
+        },
+        { name: 'author', label: 'Seu nome (opcional)', type: 'text', placeholder: 'Quem decidiu' },
+      ],
+      submitLabel: 'Registrar decisão',
+      onSubmit: async (data) => {
+        if (precisaResposta && !data.resposta) throw new Error('informe qual é a informação certa');
+        const r = await postJSON('/api/divergencia', { id, resolucao, resposta: data.resposta, author: data.author });
+        li.dataset.status = 'decidido';
+        const wrap = li.querySelector('.div-status-wrap');
+        if (wrap)
+          wrap.innerHTML = `<span class="div-status decidido">Decidido: ${escapeHtml(btn.dataset.label)}</span> <a href="${r.url}" target="_blank" rel="noopener">#${r.number}</a>`;
+        applyDivFilters();
+        return r;
+      },
+    });
+  });
+
+  const divForm = document.getElementById('div-filtros');
+  function applyDivFilters() {
+    if (!divForm) return;
+    const f = Object.fromEntries(new FormData(divForm).entries());
+    const q = (f.q || '').toLowerCase();
+    let shown = 0;
+    document.querySelectorAll('#div-list .div-item').forEach((li) => {
+      const d = li.dataset;
+      const ok =
+        (!f.fonte || d.fonte === f.fonte) &&
+        (!f.guia || d.guia === f.guia) &&
+        (!f.tipo || d.tipo === f.tipo) &&
+        (!f.sev || d.sev === f.sev) &&
+        (!f.status || d.status === f.status) &&
+        (!q || li.textContent.toLowerCase().includes(q));
+      li.hidden = !ok;
+      if (ok) shown++;
+    });
+    const c = document.getElementById('div-count');
+    if (c) c.textContent = `${shown} ${shown === 1 ? 'item' : 'itens'} na lista`;
+    const params = new URLSearchParams();
+    for (const [k, v] of Object.entries(f)) if (v) params.set(k, v);
+    history.replaceState(null, '', location.pathname + (params.toString() ? '?' + params : ''));
+  }
+  if (divForm) {
+    divForm.addEventListener('input', applyDivFilters);
+    divForm.addEventListener('change', applyDivFilters);
+    applyDivFilters();
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', annotateBlocks);
   } else {

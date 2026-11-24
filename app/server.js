@@ -3,6 +3,7 @@ const session = require('express-session');
 const path = require('path');
 const fs = require('fs');
 const { marked } = require('marked');
+const { createDivergencias } = require('./divergencias');
 
 const PORT = process.env.PORT || 3000;
 const APP_PASSWORD = process.env.APP_PASSWORD;
@@ -12,6 +13,7 @@ const GITHUB_OWNER = process.env.GITHUB_OWNER || 'efddrsn';
 const GITHUB_REPO = process.env.GITHUB_REPO || 'capim-docs';
 const GUIAS_DIR = path.resolve(__dirname, process.env.GUIAS_DIR || '../guias');
 const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || '';
+const DIVERGENCIAS_DIR = path.resolve(__dirname, process.env.DIVERGENCIAS_DIR || '../divergencias');
 
 for (const [k, v] of Object.entries({ APP_PASSWORD, SESSION_SECRET, GITHUB_PAT })) {
   if (!v) {
@@ -212,6 +214,21 @@ async function createIssue({ title, body, labels }) {
   return res.json();
 }
 
+async function githubFetch(pathAndQuery) {
+  const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}${pathAndQuery}`, {
+    headers: {
+      Authorization: `Bearer ${GITHUB_PAT}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'User-Agent': 'capim-docs-app',
+    },
+  });
+  if (!res.ok) throw new Error(`GitHub API ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  return res.json();
+}
+
+const divergencias = createDivergencias({ dir: DIVERGENCIAS_DIR, githubFetch, escapeHtml, escapeAttr });
+
 function renderPage({ title, body, user, navActive }) {
   const guides = listGuides();
   const navHtml = guides
@@ -233,6 +250,7 @@ function renderPage({ title, body, user, navActive }) {
     <a class="brand" href="/">📘 Capim Docs</a>
     <nav class="top-nav">
       <a href="/" class="${navActive === 'home' ? 'active' : ''}">Início</a>
+      <a href="/divergencias" class="${navActive === 'divergencias' ? 'active' : ''}">Divergências</a>
     </nav>
     <div class="who">${user ? `<span class="badge">logado</span> <a href="/logout">sair</a>` : ''}</div>
   </header>
@@ -307,17 +325,24 @@ app.get('/', requireAuth, (req, res) => {
   res.send(renderPage({ title: 'Guias', body, user: true, navActive: 'home' }));
 });
 
-app.get('/guia/:slug', requireAuth, (req, res) => {
+app.get('/guia/:slug', requireAuth, async (req, res, next) => {
+  try {
   const guide = findGuide(req.params.slug);
   if (!guide) return res.status(404).send(renderPage({ title: 'Não encontrado', body: '<h1>Guia não encontrado</h1>', user: true }));
   const renderer = buildMarkedRenderer();
   const html = marked.parse(guide.raw, { renderer, gfm: true, breaks: false });
   const lacunas = extractLacunas(guide);
+  await divergencias.loadResolucoes();
+  const nDiv = divergencias.countAbertasPorGuia(guide.slug);
+  const divBanner = nDiv
+    ? `<a class="div-banner" href="/divergencias?guia=${encodeURIComponent(guide.slug)}">⚠️ ${nDiv} divergência${nDiv > 1 ? 's' : ''} em aberto entre este guia e as bases dos agentes →</a>`
+    : '';
   const body = `
     <article class="doc" data-guide="${escapeAttr(guide.slug)}" data-guide-title="${escapeAttr(guide.title)}">
       <div class="doc-actions">
         <a class="back" href="/">← voltar</a>
       </div>
+      ${divBanner}
       <div class="doc-body">${html}</div>
       <hr class="end-divider"/>
       ${renderGuideLacunas(lacunas)}
@@ -325,6 +350,9 @@ app.get('/guia/:slug', requireAuth, (req, res) => {
     </article>
   `;
   res.send(renderPage({ title: guide.title, body, user: true, navActive: guide.slug }));
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.get('/lacunas', requireAuth, (req, res) => {
@@ -414,6 +442,64 @@ app.post('/api/pergunta', requireAuth, sameOriginGuard, async (req, res) => {
     res.json({ ok: true, url: issue.html_url, number: issue.number });
   } catch (err) {
     console.error('pergunta fail', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/divergencias', requireAuth, async (req, res, next) => {
+  try {
+    const q = {};
+    for (const k of ['q', 'fonte', 'guia', 'tipo', 'sev', 'status']) if (typeof req.query[k] === 'string') q[k] = req.query[k];
+    const body = await divergencias.renderPage({ guides: listGuides(), query: q });
+    res.send(renderPage({ title: 'Divergências', body, user: true, navActive: 'divergencias' }));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/api/divergencia', requireAuth, sameOriginGuard, async (req, res) => {
+  try {
+    const { id, resolucao, resposta, author } = req.body || {};
+    const found = id && divergencias.findItem(id);
+    if (!found) return res.status(400).json({ error: 'divergência não encontrada' });
+    const res0 = divergencias.RESOLUCOES[resolucao];
+    if (!res0) return res.status(400).json({ error: 'resolução inválida' });
+    if (resolucao === 'outro' && !resposta) return res.status(400).json({ error: 'informe qual é a informação certa' });
+    const { fonte, item } = found;
+    const agente = fonte.agente || fonte.slug;
+    const lado = (l) => (l && l.texto ? `> ${String(l.texto).replace(/\n/g, '\n> ')}\n` + (l.ref ? `\n_${l.ref}_${l.url ? ` (${l.url})` : ''}\n` : '') : '_Não menciona._\n');
+    const title = `[div:${item.id}] ${res0.label}: ${(item.tema || '').slice(0, 70)}`;
+    const body =
+      `**Divergência:** \`${item.id}\` · ${item.tema || ''}\n` +
+      `**Agente:** ${agente}\n` +
+      (item.guia ? `**Guia:** \`guias/guia-suporte-${item.guia}.md\`${item.capim_docs && item.capim_docs.secao ? ` (#${item.capim_docs.secao})` : ''}\n` : '') +
+      `**Decisão:** ${res0.label}\n**Ação:** ${res0.acao}\n` +
+      (author ? `**Decidido por:** ${author}\n` : '') +
+      `\n---\n\n### capim-docs\n${lado(item.capim_docs)}\n### ${agente}\n${lado(item.agente)}\n` +
+      (item.nota ? `\n**Leitura da análise:** ${item.nota}\n` : '') +
+      (resposta ? `\n### Resposta / observação\n${resposta}\n` : '') +
+      `\n_Fechar a issue quando a correção estiver aplicada. A página /divergencias passa a mostrar "Aplicado"._`;
+    const labels = ['divergencia', `fonte:${fonte.slug}`, `resolucao:${resolucao}`];
+    if (item.guia) labels.push('guia:' + item.guia);
+    const issue = await createIssue({ title, body, labels });
+    if (resolucao === 'descartar') {
+      // nada a aplicar: fecha na hora
+      await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues/${issue.number}`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${GITHUB_PAT}`,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          'User-Agent': 'capim-docs-app',
+        },
+        body: JSON.stringify({ state: 'closed', state_reason: 'not_planned' }),
+      }).catch((e) => console.error('close fail', e.message));
+    }
+    await divergencias.loadResolucoes(true);
+    res.json({ ok: true, url: issue.html_url, number: issue.number });
+  } catch (err) {
+    console.error('divergencia fail', err);
     res.status(500).json({ error: err.message });
   }
 });

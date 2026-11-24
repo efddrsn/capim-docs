@@ -136,8 +136,8 @@ function createDivergencias({ dir, githubFetch, escapeHtml, escapeAttr }) {
         : `<span class="div-status ${key}">${key === 'aplicado' ? 'Aplicado' : 'Decidido'}: ${escapeHtml(
             (RESOLUCOES[r.resolucao] || {}).label || r.resolucao || '?'
           )}</span> <a href="${escapeAttr(r.url)}" target="_blank" rel="noopener">#${r.number}</a>`;
-    const botoes = Object.entries(RESOLUCOES)
-      .filter(([k]) => (OPCOES_POR_TIPO[item.tipo] || OPCOES_POR_TIPO.conflito).includes(k))
+    const botoes = (OPCOES_POR_TIPO[item.tipo] || OPCOES_POR_TIPO.conflito)
+      .map((k) => [k, RESOLUCOES[k]])
       .map(
         ([k, v]) =>
           `<button type="button" class="div-resolve ${v.cor}" data-res="${k}" data-label="${escapeAttr(v.label)}">${escapeHtml(v.label)}</button>`
@@ -173,7 +173,7 @@ function createDivergencias({ dir, githubFetch, escapeHtml, escapeAttr }) {
   async function renderPage({ guides, query }) {
     const fontes = listFontes();
     const { map, error } = await loadResolucoes();
-    const guideTitles = Object.fromEntries(guides.map((g) => [g.slug, g.title]));
+    const guideTitles = Object.fromEntries(guides.map((g) => [g.slug, g.title.replace(/^Guia de Suporte:\s*/i, '')]));
     const all = [];
     for (const f of fontes) for (const it of f.itens) all.push({ f, it });
 
@@ -225,7 +225,7 @@ function createDivergencias({ dir, githubFetch, escapeHtml, escapeAttr }) {
       <h1>Divergências com os agentes</h1>
       <p class="lead">O capim-docs é a fonte da verdade de produto. Aqui ficam os pontos em que a base de um agente diz outra coisa, ou em que só um dos lados tem a informação. Escolha quem está certo: cada decisão vira uma issue no GitHub para alguém aplicar a correção.</p>
       <ul class="div-fontes">${fontesInfo || '<li><em>Nenhuma comparação carregada.</em></li>'}</ul>
-      ${error ? `<p class="error">Não consegui ler o status no GitHub (${escapeHtml(error)}). As decisões continuam funcionando.</p>` : ''}
+      ${error ? `<p class="error">Não consegui ler o status no GitHub agora, então todos os itens aparecem como em aberto. Registrar decisões continua funcionando.</p>` : ''}
       <div class="div-kpis">
         <div><b>${counts.total}</b><span>itens</span></div>
         <div><b>${counts.aberto}</b><span>em aberto</span></div>

@@ -98,6 +98,13 @@ function createDivergencias({ dir, githubFetch, escapeHtml, escapeAttr }) {
   }
 
   // ---- render ----
+  // só negrito e `code`: as citações vêm de markdown
+  function inlineMd(t) {
+    return escapeHtml(t)
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>');
+  }
+
   function statusDe(item, map) {
     const r = map.get(item.id);
     if (!r) return { key: 'aberto', r: null };
@@ -116,7 +123,7 @@ function createDivergencias({ dir, githubFetch, escapeHtml, escapeAttr }) {
       : '';
     return `<div class="div-side ${classe}">
       <div class="div-side-h">${escapeHtml(titulo)}${ref ? ` <span class="div-ref">· ${ref}</span>` : ''}</div>
-      <blockquote>${escapeHtml(lado.texto)}</blockquote>
+      <blockquote>${inlineMd(lado.texto)}</blockquote>
     </div>`;
   }
 
@@ -165,7 +172,7 @@ function createDivergencias({ dir, githubFetch, escapeHtml, escapeAttr }) {
         ${bloco('capim-docs', docsLado, 'docs')}
         ${bloco(fonte.agente || fonte.nome || 'Agente', item.agente, 'agente')}
       </div>
-      ${item.nota ? `<p class="div-nota"><strong>Leitura:</strong> ${escapeHtml(item.nota)}</p>` : ''}
+      ${item.nota ? `<p class="div-nota"><strong>Leitura:</strong> ${inlineMd(item.nota)}</p>` : ''}
       <div class="div-actions">${botoes}</div>
     </li>`;
   }

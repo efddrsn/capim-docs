@@ -1,0 +1,1211 @@
+{
+  "slug": "claudinha",
+  "agente": "Claudinha",
+  "nome": "Base de conhecimento de CX (André Cury, Drive)",
+  "origem_url": "https://drive.google.com/drive/folders/1ho8axrM8zo8DN4aWv2rLdVkHVeQhecp6",
+  "gerado_em": "24/11/2026",
+  "itens": [
+    {
+      "id": "cla-capix-001",
+      "guia": "capix",
+      "tema": "Vencimento das parcelas: quem define a data",
+      "tipo": "conflito",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "Pelo link, ele **escolhe em quantas parcelas** quer pagar (de 1 a 4) e **a data do primeiro vencimento**.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": {
+        "texto": "Dia de vencimento fixo = **dia da contratação**; a primeira parcela vence um mês depois. **Não há escolha do dia de vencimento.**",
+        "ref": "02_Produtos/Capix/02_regras_operacionais_capix.md",
+        "url": "https://drive.google.com/file/d/1WRSmhM0R3xSoy2Yw87_kfwsvid7dmm7E/view?usp=drivesdk"
+      },
+      "nota": "O guia diz que o paciente escolhe o primeiro vencimento no link; a Claudinha nega qualquer escolha (e ainda tem regra de retroceder ao último dia do mês). O guia se baseia no código de nov/2026, mais recente que a base (set/2026)."
+    },
+    {
+      "id": "cla-capix-002",
+      "guia": "capix",
+      "tema": "Parcelas: quem escolhe a quantidade (paciente ou clínica)",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**Quantidade de parcelas:** de 1 a 4, escolhidas pelo paciente no link (no fluxo antigo, pela clínica).",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": {
+        "texto": "A escolha de entrada e parcelas é feita pela clínica no Dash, dentro das opções ofertadas pela análise. Mudança de condições = nova proposta pela clínica.",
+        "ref": "02_Produtos/Capix/03_playbook_contratacao.md",
+        "url": "https://drive.google.com/file/d/1aqXv0dlaQbQscrMTgrbDj01pN0gUW4P_/view?usp=drivesdk"
+      },
+      "nota": "No guia, a clínica escolhe só a proposta (entrada × repasse) e o paciente escolhe as parcelas; a Claudinha descreve o que o guia chama de fluxo antigo (experimento Pix Automático). O guia ainda pede validação com produto."
+    },
+    {
+      "id": "cla-capix-003",
+      "guia": "capix",
+      "tema": "Assinatura dos Termos: Clicksign no WhatsApp ou página com código",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Ele **assina os Termos de Uso** na própria página, com um código que chega pelo WhatsApp.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": {
+        "texto": "Os Termos de Uso chegam por mensagem separada, de outro número, do remetente **\"Clicksign\"** (conta comercial verificada), com o arquivo dos termos e o botão Assinar.",
+        "ref": "02_Produtos/Capix/02_regras_operacionais_capix.md",
+        "url": "https://drive.google.com/file/d/1WRSmhM0R3xSoy2Yw87_kfwsvid7dmm7E/view?usp=drivesdk"
+      },
+      "nota": "Fluxos de assinatura diferentes: o guia fala em link/página com código via WhatsApp; a Claudinha, em assinatura Clicksign dentro do WhatsApp com data de nascimento. A Claudinha cita telas de ago/2026; o guia, código de nov/2026."
+    },
+    {
+      "id": "cla-capix-004",
+      "guia": "capix",
+      "tema": "Elegibilidade: existe paciente não elegível",
+      "tipo": "conflito",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "Os casos \"reprovados\" são **CPF não localizado** ou **paciente menor de idade**, e os dois simplesmente não são elegíveis (Denis Maeda, issue #42).",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": {
+        "texto": "**Não existe reprovação de crédito no Capix.** Nenhum CPF é recusado; o ajuste ao risco aparece nas condições ofertadas",
+        "ref": "02_Produtos/Capix/02_regras_operacionais_capix.md",
+        "url": "https://drive.google.com/file/d/1WRSmhM0R3xSoy2Yw87_kfwsvid7dmm7E/view?usp=drivesdk"
+      },
+      "nota": "Os dois concordam que não há reprovação por análise, mas a Claudinha afirma que nenhum CPF é recusado e não conhece os bloqueios de CPF não encontrado e menor de idade. O agente daria diagnóstico errado de \"não consigo simular\"."
+    },
+    {
+      "id": "cla-capix-005",
+      "guia": "capix",
+      "tema": "Proposta em aberto: reenviar link ao paciente",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Se a proposta ainda está **Em aberto**, a clínica pode abrir a linha na aba Simulações e usar **\"Reenviar link ao paciente\"**.",
+        "secao": "4-faq",
+        "ref": "Capix · 4. FAQ"
+      },
+      "agente": {
+        "texto": "A retomada é sempre por **nova proposta da clínica** — não existe \"reenviar link\".",
+        "ref": "02_Produtos/Capix/02_regras_operacionais_capix.md",
+        "url": "https://drive.google.com/file/d/1WRSmhM0R3xSoy2Yw87_kfwsvid7dmm7E/view?usp=drivesdk"
+      },
+      "nota": "O guia documenta o botão de reenvio no Portal Capix para propostas do mesmo dia; a Claudinha diz que reenvio não existe e manda sempre gerar nova proposta (com risco de condições diferentes)."
+    },
+    {
+      "id": "cla-capix-006",
+      "guia": "capix",
+      "tema": "Acompanhamento pela clínica: Portal Capix (Simulações, Contratos, Repasses)",
+      "tipo": "desatualizado",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**O Portal Capix mostra o histórico da clínica.** A aba **Contratos** lista todos os contratos fechados, em qualquer situação, e a aba **Repasses** mostra quanto a clínica recebe em cada contrato e se o depósito já saiu.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": {
+        "texto": "**Não existe área de acompanhamento no Dash.** O acompanhamento é 100% por notificações espelhadas no WhatsApp",
+        "ref": "02_Produtos/Capix/02_regras_operacionais_capix.md",
+        "url": "https://drive.google.com/file/d/1WRSmhM0R3xSoy2Yw87_kfwsvid7dmm7E/view?usp=drivesdk"
+      },
+      "nota": "O guia registra que em jul/2026 não havia histórico, mas o dash de nov/2026 já tem o Portal Capix com status de proposta, parcelas e repasse (incluindo o modal \"Andamento da proposta\"). A Claudinha parece desatualizada."
+    },
+    {
+      "id": "cla-capix-007",
+      "guia": "capix",
+      "tema": "Cobrança das parcelas: meio de pagamento",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "O **paciente paga as parcelas direto pra Capim**, por boleto ou Pix Automático.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": {
+        "texto": "Após a entrada paga, o paciente recebe por WhatsApp os links de pagamento das parcelas (Pix, emitidos via Iugu).",
+        "ref": "02_Produtos/Capix/04_playbook_parcelas_e_portal.md",
+        "url": "https://drive.google.com/file/d/1--vW7hwckee1SNhD54VpfMYNHyVAkbpg/view?usp=drivesdk"
+      },
+      "nota": "O guia fala em boleto ou Pix Automático; a Claudinha, em link Pix no WhatsApp, e trata cobrança automática no banco como experimento a escalar. Precisa definir qual é o meio padrão hoje."
+    },
+    {
+      "id": "cla-capix-008",
+      "guia": "capix",
+      "tema": "Escalonamento: time responsável pelo Capix",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**Time de Riscos** (interno Capim) para tudo do Capix: acesso da clínica, problemas de simulação, cancelamento, valores e histórico",
+        "secao": "5-resolvendo-problemas",
+        "ref": "Capix · 5. Resolvendo problemas"
+      },
+      "agente": {
+        "texto": "cancelamento e estorno de contrato → squad Capix / Cobrança;",
+        "ref": "02_Produtos/Capix/README.md",
+        "url": "https://drive.google.com/file/d/1azOHFSuhX7iwkeWpq08rZP0MINsNlhnS/view?usp=drivesdk"
+      },
+      "nota": "O guia centraliza tudo no Time de Riscos; a Claudinha divide entre squad Capix, Cobrança e Riscos. Cancelamento e quitação antecipada vão para times diferentes em cada base."
+    },
+    {
+      "id": "cla-capix-009",
+      "guia": "capix",
+      "tema": "Repasse: confirmação do paciente no dia seguinte",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Exceção: em algumas clínicas, o repasse só é agendado depois de uma **confirmação do paciente no dia seguinte**, e o tratamento não pode começar antes dela.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": {
+        "texto": "(ex.: paciente cobrado automaticamente no banco, parcelas a cada 15 dias, mensagem de validação no dia seguinte à contratação), **não improvisar** — registrar o relato e escalar para a squad Capix.",
+        "ref": "02_Produtos/Capix/README.md",
+        "url": "https://drive.google.com/file/d/1azOHFSuhX7iwkeWpq08rZP0MINsNlhnS/view?usp=drivesdk"
+      },
+      "nota": "O guia trata a confirmação do dia seguinte como exceção conhecida (com aviso no modal e status \"Pendente Confirmação\"); a Claudinha a trata como fluxo fora do documentado e autoriza iniciar o tratamento só com entrada paga."
+    },
+    {
+      "id": "cla-capix-010",
+      "guia": "capix",
+      "tema": "Linguagem: Capix não pode ser chamado de crédito",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "o Capix **não pode ser chamado de crédito**, nem para a clínica nem para o paciente.",
+        "secao": "guia-de-suporte-capix",
+        "ref": "Capix · Cabeçalho"
+      },
+      "agente": {
+        "texto": "\"O nome no contrato vem da base de crédito vinculada ao CPF; vou registrar a divergência para correção.\"",
+        "ref": "02_Produtos/Capix/02_regras_operacionais_capix.md",
+        "url": "https://drive.google.com/file/d/1WRSmhM0R3xSoy2Yw87_kfwsvid7dmm7E/view?usp=drivesdk"
+      },
+      "nota": "Regra legal do guia (Denis Maeda, issue #32). A Claudinha usa \"crédito\" e \"análise de crédito\" em frases prontas para o cliente e em toda a base."
+    },
+    {
+      "id": "cla-capix-011",
+      "guia": "capix",
+      "tema": "Nomes do produto: Pix Parcelado e Microcrédito",
+      "tipo": "conflito",
+      "severidade": "baixa",
+      "capim_docs": {
+        "texto": "Falar sempre em **parcelamento via Pix** ou **Pix parcelado**.",
+        "secao": "guia-de-suporte-capix",
+        "ref": "Capix · Cabeçalho"
+      },
+      "agente": {
+        "texto": "\"Pix Parcelado\" e \"Microcrédito\" são nomes legados",
+        "ref": "02_Produtos/Capix/01_visao_geral_capix.md",
+        "url": "https://drive.google.com/file/d/1yS4PrtrJO7O1jx0ljRZJDnAapkPgJ60G/view?usp=drivesdk"
+      },
+      "nota": "Para o guia, \"Pix parcelado\" é termo recomendado e \"microcrédito\" é nome técnico que não deve ser dito ao cliente. A Claudinha trata os dois como nomes legados equivalentes."
+    },
+    {
+      "id": "cla-capix-012",
+      "guia": "capix",
+      "tema": "Repasse menor que o tratamento: motivo",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Porque a Capim **adianta o valor** pra clínica em até 1 dia útil e desconta uma taxa por isso.",
+        "secao": "4-faq",
+        "ref": "Capix · 4. FAQ"
+      },
+      "agente": {
+        "texto": "ele é menor que o valor do tratamento por construção (condições da análise individualizada).",
+        "ref": "02_Produtos/Capix/05_playbook_repasse_clinica.md",
+        "url": "https://drive.google.com/file/d/1fmnJpotiGS8tdawt_zCUfZWaRRSL1Xtp/view?usp=drivesdk"
+      },
+      "nota": "O guia explica a diferença como taxa por antecipação (entrada maior, taxa menor; não depende das parcelas; não repassar ao paciente). A Claudinha atribui à análise individualizada e diz não haver relação fixa com a entrada."
+    },
+    {
+      "id": "cla-capix-013",
+      "guia": "capix",
+      "tema": "Simulação: em que momento a clínica informa o valor",
+      "tipo": "conflito",
+      "severidade": "baixa",
+      "capim_docs": {
+        "texto": "a clínica informa CPF do paciente, procedimento(s) e aceita os Termos de Uso. Nessa tela **não há campo de valor**.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": {
+        "texto": "a clínica acessa Meios de pagamento → Capix no Dash, informa valor, procedimento, CPF e contatos, e simula.",
+        "ref": "02_Produtos/Capix/01_visao_geral_capix.md",
+        "url": "https://drive.google.com/file/d/1yS4PrtrJO7O1jx0ljRZJDnAapkPgJ60G/view?usp=drivesdk"
+      },
+      "nota": "No guia, o valor só é digitado depois da análise, na tela de propostas; a Claudinha descreve o valor junto dos dados iniciais (como no fluxo antigo)."
+    },
+    {
+      "id": "cla-capix-014",
+      "guia": "capix",
+      "tema": "Parcelas: renegociação existe no sistema",
+      "tipo": "conflito",
+      "severidade": "baixa",
+      "capim_docs": {
+        "texto": "**Parcelas (dentro de cada contrato):** **A vencer**, **Atrasada**, **Expirada**, **Paga**, **Renegociada** e **Estornada**.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": {
+        "texto": "**Não existe mecânica de renegociação de Capix no sistema**",
+        "ref": "02_Produtos/Capix/04_playbook_parcelas_e_portal.md",
+        "url": "https://drive.google.com/file/d/1--vW7hwckee1SNhD54VpfMYNHyVAkbpg/view?usp=drivesdk"
+      },
+      "nota": "O Portal Capix tem status \"Renegociada\" para parcelas, o que sugere que renegociação acontece (mesmo que manual). Os dois mandam escalar; o conflito é só na afirmação."
+    },
+    {
+      "id": "cla-capix-015",
+      "guia": "capix",
+      "tema": "Limites de valor da simulação: R$ 100 a R$ 1.000",
+      "tipo": "so_no_docs",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "**Valor máximo:** R$ 1.000,00. É o teto oficial (Denis Maeda, issue #44). O limite de cada paciente vem da análise e pode ser menor.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": null,
+      "nota": "A Claudinha não cita mínimo nem teto. Sem isso, não orienta tratamentos acima de R$ 1.000 (Capix cobre só parte) nem simulações abaixo de R$ 100."
+    },
+    {
+      "id": "cla-capix-016",
+      "guia": "capix",
+      "tema": "Horário de funcionamento do Capix",
+      "tipo": "so_no_docs",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "A simulação só pode ser feita **dentro do horário de funcionamento Capix**: segunda a sexta das **8h às 20h** e sábado das **8h às 14h**.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": null,
+      "nota": "Causa frequente de \"não consigo simular\" ausente na Claudinha, que só lista telefone compartilhado e contrato vigente. O horário de sábado (14h × 16h) ainda está pendente no guia."
+    },
+    {
+      "id": "cla-capix-017",
+      "guia": "capix",
+      "tema": "Canal de suporte Capix: telefone (11) 4210-5578",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**Telefone de suporte Capix:** o número atual é **(11) 4210-5578**. Os números anteriores, incluindo o `+55 11 96173-3162`, foram **desativados**",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": null,
+      "nota": "A Claudinha não tem o número nem sabe que o antigo foi desligado. No guia, é o caminho para cancelar proposta antes do aceite."
+    },
+    {
+      "id": "cla-capix-018",
+      "guia": "capix",
+      "tema": "Cancelamento de contrato pela clínica: botão Cancelar",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Na aba **Contratos**, os contratos que podem ser cancelados mostram o botão **\"Cancelar\"**, que abre um formulário de solicitação",
+        "secao": "4-faq",
+        "ref": "Capix · 4. FAQ"
+      },
+      "agente": null,
+      "nota": "A Claudinha só manda coletar e escalar. Não sabe que a clínica abre o pedido sozinha e acompanha pelo status \"Cancelamento solicitado\"."
+    },
+    {
+      "id": "cla-capix-019",
+      "guia": "capix",
+      "tema": "Modal \"Capix temporariamente fora do ar\"",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Existe modal \"**Capix temporariamente fora do ar**\" (`ServiceUnavailableModal`), controlado pela flag `FF_MICROCREDITS_SERVICE_UNAVAILABLE`.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Capix · 2. Como funciona"
+      },
+      "agente": null,
+      "nota": "Sem isso, o agente trata manutenção planejada como erro de sistema e escala sem necessidade."
+    },
+    {
+      "id": "cla-capix-020",
+      "guia": "capix",
+      "tema": "Simulação: celular já usado por outro CPF bloqueia",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "**Um mesmo número de celular não pode ter contratos de CPFs distintos.** Se a clínica tentar simular com um celular já utilizado em contrato de outro CPF, a simulação é bloqueada.",
+        "ref": "02_Produtos/Capix/02_regras_operacionais_capix.md",
+        "url": "https://drive.google.com/file/d/1WRSmhM0R3xSoy2Yw87_kfwsvid7dmm7E/view?usp=drivesdk"
+      },
+      "nota": "O guia só diz que o celular deve ser do próprio paciente, sem citar o bloqueio por colisão de telefone."
+    },
+    {
+      "id": "cla-capix-021",
+      "guia": "capix",
+      "tema": "Nome do paciente: vem do bureau e não é editável",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "**Não há campo de nome do paciente na simulação.** O nome é resolvido a partir do CPF **nos bureaus de crédito** e é esse nome que vai para os Termos de Uso e para as mensagens.",
+        "ref": "02_Produtos/Capix/02_regras_operacionais_capix.md",
+        "url": "https://drive.google.com/file/d/1WRSmhM0R3xSoy2Yw87_kfwsvid7dmm7E/view?usp=drivesdk"
+      },
+      "nota": "O guia não trata nome divergente nos termos. A Claudinha manda escalar para correção interna."
+    },
+    {
+      "id": "cla-capix-022",
+      "guia": "capix",
+      "tema": "Portal do Paciente: acesso e pagamento das parcelas",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Web app em `https://cliente.capim.com.br/entrar` onde o paciente acompanha o plano e paga as parcelas.",
+        "ref": "02_Produtos/Capix/01_visao_geral_capix.md",
+        "url": "https://drive.google.com/file/d/1yS4PrtrJO7O1jx0ljRZJDnAapkPgJ60G/view?usp=drivesdk"
+      },
+      "nota": "O guia não cita o Portal do Paciente (o resumo geral o deixa fora do escopo). Acesso por CPF + código no WhatsApp, sem senha; o login não confirma se o CPF é cliente."
+    },
+    {
+      "id": "cla-capix-023",
+      "guia": "capix",
+      "tema": "Portal do Paciente: parcelas liberadas em sequência",
+      "tipo": "so_no_agente",
+      "severidade": "baixa",
+      "capim_docs": null,
+      "agente": {
+        "texto": "**Liberação sequencial:** só é possível pagar a próxima parcela depois de quitar a anterior.",
+        "ref": "02_Produtos/Capix/04_playbook_parcelas_e_portal.md",
+        "url": "https://drive.google.com/file/d/1--vW7hwckee1SNhD54VpfMYNHyVAkbpg/view?usp=drivesdk"
+      },
+      "nota": "Regra de pagamento ausente no guia."
+    },
+    {
+      "id": "cla-capix-024",
+      "guia": "capix",
+      "tema": "Código Pix da parcela expirado: segunda via",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "**Código Pix expirado não tem segunda via dentro do Portal.** A segunda via é tratada pelo atendimento: registrar a parcela (número e vencimento) e escalar para a emissão da nova cobrança",
+        "ref": "02_Produtos/Capix/04_playbook_parcelas_e_portal.md",
+        "url": "https://drive.google.com/file/d/1--vW7hwckee1SNhD54VpfMYNHyVAkbpg/view?usp=drivesdk"
+      },
+      "nota": "O guia lista o status \"Expirada\" da parcela, mas não diz como o paciente consegue nova cobrança."
+    },
+    {
+      "id": "cla-capix-025",
+      "guia": "capix",
+      "tema": "Quitação antecipada: sem desconto automático",
+      "tipo": "so_no_agente",
+      "severidade": "baixa",
+      "capim_docs": null,
+      "agente": {
+        "texto": "O Capix é sem juros, então não há desconto automático de antecipação.",
+        "ref": "02_Produtos/Capix/04_playbook_parcelas_e_portal.md",
+        "url": "https://drive.google.com/file/d/1--vW7hwckee1SNhD54VpfMYNHyVAkbpg/view?usp=drivesdk"
+      },
+      "nota": "Responde lacuna do guia (quitação antecipada está 🚧 PENDENTE). O time de destino diverge: Cobrança na Claudinha, Riscos no guia."
+    },
+    {
+      "id": "cla-capix-026",
+      "guia": "capix",
+      "tema": "Repasse pendente de validação: o que fazer",
+      "tipo": "so_no_agente",
+      "severidade": "baixa",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Escalar para a squad Capix/Riscos com os dados do contrato. Linguagem neutra com a clínica",
+        "ref": "02_Produtos/Capix/05_playbook_repasse_clinica.md",
+        "url": "https://drive.google.com/file/d/1fmnJpotiGS8tdawt_zCUfZWaRRSL1Xtp/view?usp=drivesdk"
+      },
+      "nota": "Responde lacuna do guia (o que fazer com repasse em \"Pendente Confirmação\"): a ação é da Capim, não da clínica."
+    },
+    {
+      "id": "cla-cred-001",
+      "guia": "carne-boleto",
+      "tema": "Carnê: caminho no menu",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Menu lateral → Produtos financeiros → **Carnê Capim** (rota `/finance/carnes`) para a página completa com análise de crédito + lista de carnês.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Carnê Capim e Boleto · 2. Como funciona (passo a passo)"
+      },
+      "agente": {
+        "texto": "Caminho observado no produto: **Meios de Pagamento > Carnê Capim > Solicitar Saque > Alterar Conta Bancária**.",
+        "ref": "02_Produtos/Carnê Capim - Conta Bancária e Saque.md",
+        "url": "https://drive.google.com/file/d/1K55CU2_QXoiCNGFbkxqoEFdcnlJLR2Dm/view?usp=drivesdk"
+      },
+      "nota": "O guia põe o Carnê em \"Produtos financeiros\"; a Claudinha, em \"Meios de Pagamento\". O próprio guia do Capix no capim-docs usa \"Meios de pagamento\", o que sugere que a Claudinha (jul/2026) está mais atual."
+    },
+    {
+      "id": "cla-cred-002",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: caminho no menu",
+      "tipo": "conflito",
+      "severidade": "baixa",
+      "capim_docs": {
+        "texto": "Menu lateral → Financiamento (Credits).",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Financiamento Capim · 2. Como funciona (passo a passo)"
+      },
+      "agente": {
+        "texto": "No Dash, o submenu Meios de pagamento lista, nesta ordem: Financiamento Capim · Carnê Capim · **Capix** · Maquininha.",
+        "ref": "02_Produtos/Capix/01_visao_geral_capix.md",
+        "url": "https://drive.google.com/file/d/1yS4PrtrJO7O1jx0ljRZJDnAapkPgJ60G/view?usp=drivesdk"
+      },
+      "nota": "Guia trata \"Financiamento\" como item do menu lateral; a Claudinha diz que é \"Financiamento Capim\" dentro do submenu \"Meios de pagamento\". Mesma questão de menu do item do Carnê."
+    },
+    {
+      "id": "cla-cred-003",
+      "guia": "carne-boleto",
+      "tema": "Carnê: saque e troca de conta bancária",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Após o preenchimento, a alteração não é imediata. Há validação de titularidade com parceiro para confirmar que a conta pertence ao mesmo CPF ou CNPJ do cadastro. … A validação leva entre 1 e 3 dias úteis. Após aprovação, a nova conta é atualizada automaticamente.",
+        "ref": "02_Produtos/Carnê Capim - Conta Bancária e Saque.md",
+        "url": "https://drive.google.com/file/d/1K55CU2_QXoiCNGFbkxqoEFdcnlJLR2Dm/view?usp=drivesdk"
+      },
+      "nota": "O guia do Carnê não fala de saldo, saque nem troca de conta. O guia de Maquininha tem lacuna aberta sobre o caminho de troca de conta; se o fluxo for o mesmo, a Claudinha responde essa lacuna."
+    },
+    {
+      "id": "cla-cred-004",
+      "guia": "carne-boleto",
+      "tema": "Carnê: limite diário de saque",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Há referência operacional a limite diário de R$ 12.000,00. Quando o saldo disponível for superior, o cliente pode precisar realizar saques em dias diferentes.",
+        "ref": "02_Produtos/Carnê Capim - Conta Bancária e Saque.md",
+        "url": "https://drive.google.com/file/d/1K55CU2_QXoiCNGFbkxqoEFdcnlJLR2Dm/view?usp=drivesdk"
+      },
+      "nota": "Não aparece no capim-docs. A própria Claudinha pede validação. O guia de Maquininha diz que o saque é sempre do saldo inteiro; se a tela de saque for a mesma, o limite precisa ser conferido."
+    },
+    {
+      "id": "cla-cred-005",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: prazo máximo do contrato",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "| Prazo máximo absoluto | Até 36 meses, conforme perfil | Até 30 meses | Até 36 meses, conforme perfil |",
+        "ref": "03_Politicas_Processos/Credito/C1 - Pré-Análise para Assinantes e Redes.md",
+        "url": "https://drive.google.com/file/d/1hytmYanRFcvz9gjeJ-rkEHVPeOGqM6ks/view?usp=drivesdk"
+      },
+      "nota": "Colunas: paciente assinante, responsável financeiro, redes. O guia não informa prazo máximo do Financiamento."
+    },
+    {
+      "id": "cla-cred-006",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: análise quando há responsável financeiro",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Quando o contratante é um responsável financeiro, o CPF do paciente também pode ser consultado. Restrições relevantes do paciente podem gerar `patient_negativation`.",
+        "ref": "03_Politicas_Processos/Credito/C2 - Análise Final, Antifraude e App Auto.md",
+        "url": "https://drive.google.com/file/d/1wb6VS6ZmMvBlc-0QE4sZVWbpAR9en5Ca/view?usp=drivesdk"
+      },
+      "nota": "O guia sugere tentar um responsável financeiro diferente após recusa, sem avisar que o CPF do paciente também é checado e que o fluxo de responsável é mais restritivo (até 30 meses, recusa em falha de bureau)."
+    },
+    {
+      "id": "cla-cred-007",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: resultado depende do CPF e da clínica",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "O risco do contrato é a combinação entre **CPF e clínica**; o mesmo cliente pode ter resultados diferentes em clínicas diferentes.",
+        "ref": "03_Politicas_Processos/Credito/Política de Crédito V6 - Visão Geral.md",
+        "url": "https://drive.google.com/file/d/1DT5Uy_PmtnezUcSiaqSFGS2b7bX4v85y/view?usp=drivesdk"
+      },
+      "nota": "Útil para o caso \"aprovado em uma clínica, recusado em outra\". O rating da clínica também pode recusar sozinho (código `clinic_rating`). Não está no guia."
+    },
+    {
+      "id": "cla-cred-008",
+      "guia": "financiamento-capim",
+      "tema": "Recusa: pode repassar o motivo ao paciente?",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Escalar pra **Time de Sustentação** se a clínica precisa do motivo bruto pra comunicar com o paciente; respeitar política de privacidade.",
+        "secao": "5-resolvendo-problemas",
+        "ref": "Financiamento Capim · 5. Resolvendo problemas"
+      },
+      "agente": {
+        "texto": "Não comunicar ao cliente cortes, scores, listas ou regras antifraude internas.",
+        "ref": "03_Politicas_Processos/Credito/Dicionário de Decisões e Motivos de Recusa.md",
+        "url": "https://drive.google.com/file/d/1tb1IhPDs8H9_MWtRXbZL7fqM_Qu_IKCC/view?usp=drivesdk"
+      },
+      "nota": "O guia admite buscar o motivo bruto para a clínica repassar; a Claudinha proíbe expor critérios internos. Precisa de uma regra única sobre o que pode ser dito."
+    },
+    {
+      "id": "cla-cred-009",
+      "guia": "financiamento-capim",
+      "tema": "Recusa: lista de códigos de motivo",
+      "tipo": "conflito",
+      "severidade": "baixa",
+      "capim_docs": {
+        "texto": "**Motivos de rejeição** do BNPL são enumerados no backend (`Request::BNPL_REJECTION_REASONS`): `bacen`, `committed_income`, `geolocation`, `high_amount_for_risk_with_counter_proposal`, `no_contact`, `occupation`, `out_of_policy`, `patient_negativation`, …",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Financiamento Capim · 2. Como funciona (passo a passo)"
+      },
+      "agente": {
+        "texto": "| low_value | Recusa | Valor solicitado abaixo do mínimo da política. |\n| bad_list | Recusa | CPF presente em lista interna impeditiva. |\n| clinic_rating | Recusa | Rating da clínica não elegível para o fluxo. |",
+        "ref": "03_Politicas_Processos/Credito/Dicionário de Decisões e Motivos de Recusa.md",
+        "url": "https://drive.google.com/file/d/1tb1IhPDs8H9_MWtRXbZL7fqM_Qu_IKCC/view?usp=drivesdk"
+      },
+      "nota": "As listas quase não se cruzam (só `patient_negativation`). Provavelmente são camadas diferentes: códigos do motor C1/C2 (Claudinha) e enum do backend (guia). Vale dizer qual o atendente vê."
+    },
+    {
+      "id": "cla-cred-010",
+      "guia": "financiamento-capim",
+      "tema": "Credenciamento: especialidades aceitas",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "tipo de procedimento (`dentistry`, `aesthetic`, `diagnosys_exams`, `ophthalmology`, `optical_shop`, `dermatology`, `gynecology_obstetrics`, `vaccine`, `other`)",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Financiamento Capim · 2. Como funciona (passo a passo)"
+      },
+      "agente": {
+        "texto": "A atividade deve estar relacionada à odontologia; a referência indicada é a classe CNAE 86.30-5.\n- Procedimentos estéticos não inerentes à odontologia e profissionais sem registro compatível não entram no escopo padrão.",
+        "ref": "03_Politicas_Processos/Credito/Política de Credenciamento de Clínicas.md",
+        "url": "https://drive.google.com/file/d/1R_daR7SmnjLSOYgRc4nia5GVeewM7KGs/view?usp=drivesdk"
+      },
+      "nota": "O guia lista procedimentos de outras especialidades aceitos na pré-análise; a política da Claudinha restringe o credenciamento à odontologia. Pode ser só enum do sistema mais largo que a política; confirmar."
+    },
+    {
+      "id": "cla-cred-011",
+      "guia": "financiamento-capim",
+      "tema": "Credenciamento: CNPJ recente",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "**CNPJ com menos de quatro meses:** análise manual e possível comitê.",
+        "ref": "03_Politicas_Processos/Credito/Política de Credenciamento de Clínicas.md",
+        "url": "https://drive.google.com/file/d/1R_daR7SmnjLSOYgRc4nia5GVeewM7KGs/view?usp=drivesdk"
+      },
+      "nota": "O guia de Financiamento não fala de tempo de CNPJ. O de Maquininha cita \"empresa recém-aberta\" e \"CRO menor que 1 ano\" como recusa, mas no POS. Idade mínima do paciente e tempo de CRO não aparecem em nenhum dos dois lados para o Financiamento."
+    },
+    {
+      "id": "cla-cred-012",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: verificação de identidade antes da liberação",
+      "tipo": "so_no_agente",
+      "severidade": "baixa",
+      "capim_docs": null,
+      "agente": {
+        "texto": "`flagKYC` indica necessidade de verificação de identidade antes da liberação.\n- A ausência de aprovação automática não equivale, por si só, a recusa de crédito; o caso pode seguir por análise humana.",
+        "ref": "03_Politicas_Processos/Credito/C2 - Análise Final, Antifraude e App Auto.md",
+        "url": "https://drive.google.com/file/d/1wb6VS6ZmMvBlc-0QE4sZVWbpAR9en5Ca/view?usp=drivesdk"
+      },
+      "nota": "O guia cita filas de análise humana, mas não a etapa de KYC do tomador. Ajuda a explicar pedidos de validação de identidade ao paciente."
+    },
+    {
+      "id": "cla-cred-013",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: repasse à clínica exige \"Solicitar pagamento\"",
+      "tipo": "so_no_docs",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "**Não é automático no momento da aprovação ou da assinatura do contrato.** Quando o contrato fica em `contract_sign` (paciente assinou), o card do contrato passa a mostrar a ação \"Solicitar pagamento\".",
+        "secao": "4-faq",
+        "ref": "Financiamento Capim · 4. FAQ"
+      },
+      "agente": null,
+      "nota": "A Claudinha lista \"pagamento à clínica\" como dor frequente, mas não tem a regra. Sem ela, o agente não orienta a clínica a clicar no botão."
+    },
+    {
+      "id": "cla-cred-014",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: pré-análise e simulação expiram em 15 dias",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**Pré-análise e CreditLead expiram em 15 dias** (scope `expirable` em `PreAnalysis` e `CreditLead`). Lead/análise antiga não pode ser \"ressuscitada\", precisa começar do zero.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Financiamento Capim · 2. Como funciona (passo a passo)"
+      },
+      "agente": null,
+      "nota": "A Claudinha só diz que a pré-análise não garante aprovação. Falta o prazo de validade."
+    },
+    {
+      "id": "cla-cred-015",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: quando dá para cancelar o contrato",
+      "tipo": "so_no_docs",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "a ação \"Cancelar contrato\" está disponível em: `contract_sign`, `release_blocked`, `release_approved`. … Se o contrato já está em `released`/`retailer_paid`, o dinheiro já foi liberado e cancelamento envolve estorno, que não é via interface, é via **Time de Sustentação**.",
+        "secao": "4-faq",
+        "ref": "Financiamento Capim · 4. FAQ"
+      },
+      "agente": null,
+      "nota": "O índice da Claudinha diz que \"cancelamento de tratamento financiado\" ainda precisa ser documentado. O guia marca a regra como \"validar\", mas ela vem do código."
+    },
+    {
+      "id": "cla-cred-016",
+      "guia": "financiamento-capim",
+      "tema": "Financiamento: paciente menor de idade",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Na simulação V2, marcar o checkbox \"Paciente é menor de idade\" (`underage`). … Quem assume o contrato é o responsável, não o menor.",
+        "secao": "4-faq",
+        "ref": "Financiamento Capim · 4. FAQ"
+      },
+      "agente": null,
+      "nota": "A Claudinha fala de responsável financeiro e de recusa por idade (`lower_age`), mas não do fluxo para menor de idade."
+    },
+    {
+      "id": "cla-cred-017",
+      "guia": "carne-boleto",
+      "tema": "Carnê: quem assume a inadimplência",
+      "tipo": "so_no_docs",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "Quem assume o risco da inadimplência é a **clínica**, não a Capim: se o paciente não pagar, é a clínica que perde.",
+        "secao": "1-visao-geral",
+        "ref": "Carnê Capim e Boleto · 1. Visão geral"
+      },
+      "agente": null,
+      "nota": "Diferença central entre Carnê e Financiamento. A Claudinha não tem essa regra; o agente pode prometer cobrança da Capim no Carnê."
+    },
+    {
+      "id": "cla-cred-018",
+      "guia": "carne-boleto",
+      "tema": "Carnê: baixa manual sem cancelar boleto",
+      "tipo": "so_no_docs",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "O sistema **só cancela o boleto na Iugu se a parcela for cancelada**; se a clínica só dá baixa manual sem cancelar o boleto, o boleto continua emitido e o paciente pode pagar duas vezes.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Carnê Capim e Boleto · 2. Como funciona (passo a passo)"
+      },
+      "agente": null,
+      "nota": "Gera pagamento em duplicidade se o agente não orientar o cancelamento do boleto."
+    },
+    {
+      "id": "cla-cred-019",
+      "guia": "carne-boleto",
+      "tema": "Carnê: taxa por boleto pago",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**Taxa de R$ 1,99 por boleto pago** está hard-coded na env do front. Não é configurável por clínica.",
+        "secao": "6-limitacoes-conhecidas",
+        "ref": "Carnê Capim e Boleto · 6. Limitações conhecidas"
+      },
+      "agente": null,
+      "nota": "Valor de dinheiro ausente na Claudinha. O guia ainda pede para confirmar se é o valor vigente e quando é descontado."
+    },
+    {
+      "id": "cla-cred-020",
+      "guia": "carne-boleto",
+      "tema": "Carnê: limites de criação e edição",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**Valor e data de uma parcela individual não são editáveis** pela UI depois de gerados. Para ajustar, é cancelar e recriar.",
+        "secao": "6-limitacoes-conhecidas",
+        "ref": "Carnê Capim e Boleto · 6. Limitações conhecidas"
+      },
+      "agente": null,
+      "nota": "Também no guia: 1 a 36 parcelas, vencimentos pelo dia da 1ª parcela e conta Iugu com KYC obrigatória. Nada disso está na Claudinha."
+    },
+    {
+      "id": "cla-pos-001",
+      "guia": "maquininha",
+      "tema": "Aluguel da maquininha: faixa de isenção da mensalidade",
+      "tipo": "so_no_agente",
+      "severidade": "alta",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Há previsão de isenção total da mensalidade nos meses em que o estabelecimento atingir faturamento igual ou superior a **R$ 10.000,00** pela própria maquininha.",
+        "ref": "POS/02_regras_comerciais_e_operacionais_pos.md",
+        "url": "https://drive.google.com/file/d/1NLZeX_Lc0K-gYuJD2o5qNAbKnjEh1cNs/view?usp=drivesdk"
+      },
+      "nota": "Responde lacuna do guia: o guia só confirma R$ 69,90/mês e marca a regra de isenção como 🚧 PENDENTE. A própria Claudinha pede validação. Outra área citou R$ 5 mil ou R$ 7 mil; esse valor não aparece na base POS da Claudinha. Definir o valor oficial."
+    },
+    {
+      "id": "cla-pos-002",
+      "guia": "maquininha",
+      "tema": "Cancelamento da maquininha: taxa de desinstalação",
+      "tipo": "so_no_agente",
+      "severidade": "alta",
+      "capim_docs": null,
+      "agente": {
+        "texto": "O material analisado prevê cobrança de **R$ 111,00** em encerramento por iniciativa do cliente, para cobertura de despesas administrativas e operacionais.",
+        "ref": "POS/02_regras_comerciais_e_operacionais_pos.md",
+        "url": "https://drive.google.com/file/d/1NLZeX_Lc0K-gYuJD2o5qNAbKnjEh1cNs/view?usp=drivesdk"
+      },
+      "nota": "O guia não trata encerramento do contrato nem devolução do aparelho. A Claudinha aponta tensão com a cláusula de rescisão sem multa e pede validação do Jurídico."
+    },
+    {
+      "id": "cla-pos-003",
+      "guia": "maquininha",
+      "tema": "Perda ou dano do aparelho: valor cobrado",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "O material prevê cobrança de **US$ 195,00**, convertidos para reais na cotação aplicável, em caso de perda ou dano permanente do equipamento.",
+        "ref": "POS/02_regras_comerciais_e_operacionais_pos.md",
+        "url": "https://drive.google.com/file/d/1NLZeX_Lc0K-gYuJD2o5qNAbKnjEh1cNs/view?usp=drivesdk"
+      },
+      "nota": "Sem equivalente no guia. A Claudinha também prevê cobrança do conserto por orçamento em dano reparável e pede B.O. ou laudo em furto/roubo."
+    },
+    {
+      "id": "cla-pos-004",
+      "guia": "maquininha",
+      "tema": "Cancelamento da maquininha: aviso prévio de rescisão",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Os termos indicam contrato por prazo indeterminado e aviso prévio escrito de 15 dias para rescisão sem justa causa, sem prejuízo das obrigações relativas a transações, chargebacks e devolução.",
+        "ref": "POS/02_regras_comerciais_e_operacionais_pos.md",
+        "url": "https://drive.google.com/file/d/1NLZeX_Lc0K-gYuJD2o5qNAbKnjEh1cNs/view?usp=drivesdk"
+      },
+      "nota": "O guia não cobre o encerramento do contrato. Regra vem dos termos, ainda \"em revisão jurídica\" na Claudinha."
+    },
+    {
+      "id": "cla-pos-005",
+      "guia": "maquininha",
+      "tema": "Estorno de venda no cartão: prazos por modalidade",
+      "tipo": "so_no_agente",
+      "severidade": "alta",
+      "capim_docs": null,
+      "agente": {
+        "texto": "crédito: solicitação em até 90 dias da apresentação da transação; … débito: solicitação na mesma data da captura;",
+        "ref": "POS/02_regras_comerciais_e_operacionais_pos.md",
+        "url": "https://drive.google.com/file/d/1NLZeX_Lc0K-gYuJD2o5qNAbKnjEh1cNs/view?usp=drivesdk"
+      },
+      "nota": "Responde lacuna do guia (\"Fluxo oficial pra clínica solicitar estorno de cartão (canal, prazo, quem efetiva)\"). A Claudinha diz ainda que venda já liquidada é compensada na agenda e, sem saldo, a clínica pode ter de restituir."
+    },
+    {
+      "id": "cla-pos-006",
+      "guia": "maquininha",
+      "tema": "Estorno de venda no cartão: onde a clínica faz",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Cancelamento de cartão **não tem fluxo na UI**. Cliente tem que abrir chamado com o suporte.",
+        "secao": "4-faq",
+        "ref": "Maquininha · 4. FAQ"
+      },
+      "agente": {
+        "texto": "Os tickets mostram orientação recorrente de realizar o estorno diretamente na maquininha, acessando o menu de funções e apresentando o cartão do cliente.",
+        "ref": "POS/05_playbook_cancelamento_estorno_e_chargeback.md",
+        "url": "https://drive.google.com/file/d/1-NKS459aX87UJHf4fZ2wCQJZV_XPSkye/view?usp=drivesdk"
+      },
+      "nota": "O guia manda sempre abrir chamado e escalar (\"não tem autosserviço\"). A Claudinha orienta a clínica a estornar no próprio terminal na venda do mesmo dia. O guia fala só do painel e não diz se o terminal estorna; confirmar o fluxo oficial."
+    },
+    {
+      "id": "cla-pos-007",
+      "guia": "maquininha",
+      "tema": "Contestação de valores: prazo de 60 dias",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Os termos analisados estabelecem prazo de até **60 dias** a partir da disponibilização do extrato para contestar diferenças ou erros de cobrança.",
+        "ref": "POS/02_regras_comerciais_e_operacionais_pos.md",
+        "url": "https://drive.google.com/file/d/1NLZeX_Lc0K-gYuJD2o5qNAbKnjEh1cNs/view?usp=drivesdk"
+      },
+      "nota": "Sem equivalente no guia. A Claudinha aplica o mesmo prazo para pagamentos não realizados e pede validação do Jurídico."
+    },
+    {
+      "id": "cla-pos-008",
+      "guia": "maquininha",
+      "tema": "Valor líquido: o que explica a diferença para o bruto",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "R: Diferença = taxa do meio de pagamento.",
+        "secao": "4-faq",
+        "ref": "Maquininha · 4. FAQ"
+      },
+      "agente": {
+        "texto": "É o valor que o estabelecimento tem direito a receber depois dos descontos aplicáveis, que podem incluir taxas, antecipação, cancelamentos, chargebacks, aluguel, ajustes ou outras cobranças previstas.",
+        "ref": "POS/01_visao_geral_capininha_pos.md",
+        "url": "https://drive.google.com/file/d/1l1Tu5gcYqirC2a2IrlnFt0RgqgtpOZIf/view?usp=drivesdk"
+      },
+      "nota": "O guia atribui toda a diferença à taxa do método. A Claudinha inclui aluguel, chargeback, cancelamento e ajustes no desconto. Confirmar se o aluguel e outros valores saem do repasse."
+    },
+    {
+      "id": "cla-pos-009",
+      "guia": "maquininha",
+      "tema": "Conta de recebimento: pagar dentista ou sócio em conta própria (split)",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "a parte do dentista vai pra conta bancária dele (cadastrada como split member), enquanto a parte da clínica vai pra conta da clínica.",
+        "secao": "3-casos-de-uso-esperados",
+        "ref": "Maquininha · 3. Casos de uso"
+      },
+      "agente": {
+        "texto": "Não aprovar apenas por relação familiar, societária ou operacional.",
+        "ref": "POS/09_playbook_conta_bancaria_e_titularidade.md",
+        "url": "https://drive.google.com/file/d/1b1WHyo0uqlNDdNeCCSTDzAaz9xOpe-cM/view?usp=drivesdk"
+      },
+      "nota": "A Claudinha não conhece o split e tende a negar pedido de repasse a dentista ou sócio. O guia mostra o caminho: cadastrar o profissional como split member (formulário externo, soma 100%, não retroage). A regra de titularidade vale para a conta principal; o split é a exceção formal."
+    },
+    {
+      "id": "cla-pos-010",
+      "guia": "maquininha",
+      "tema": "Elegibilidade: pessoa física ou só CNPJ",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Clínica precisa ter CNPJ cadastrado (o fluxo de credenciamento pergunta logo no início se é pessoa jurídica).",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Maquininha · 2. Como funciona"
+      },
+      "agente": {
+        "texto": "É a pessoa física ou jurídica credenciada para aceitar transações e receber os respectivos valores líquidos.",
+        "ref": "POS/01_visao_geral_capininha_pos.md",
+        "url": "https://drive.google.com/file/d/1l1Tu5gcYqirC2a2IrlnFt0RgqgtpOZIf/view?usp=drivesdk"
+      },
+      "nota": "O guia exige CNPJ para a maquininha. A Claudinha (texto dos termos) admite pessoa física, e a política de credenciamento cita escopo \"PJ de redes, PJ avulsa e PF\". O próprio guia hesita (\"pergunta se é pessoa jurídica\"); confirmar se PF pode ter maquininha."
+    },
+    {
+      "id": "cla-pos-011",
+      "guia": "maquininha",
+      "tema": "Credenciamento: CNPJ recém-aberto",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "**CNPJ com menos de quatro meses:** análise manual e possível comitê.",
+        "ref": "03_Politicas_Processos/Credito/Política de Credenciamento de Clínicas.md",
+        "url": "https://drive.google.com/file/d/1R_daR7SmnjLSOYgRc4nia5GVeewM7KGs/view?usp=drivesdk"
+      },
+      "nota": "O guia só lista \"empresa recém-aberta\" como motivo de rejeição, sem corte de tempo. A política da Claudinha é de crédito; o guia diz que o credenciamento V2 é o mesmo do BNPL/Carnê, mas confirmar se vale para POS. Outra área citou 2 ou 4 meses."
+    },
+    {
+      "id": "cla-pos-012",
+      "guia": "maquininha",
+      "tema": "Credenciamento: motivos de rejeição e CRO com menos de 1 ano",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Os motivos possíveis são: CNPJ com restrição, sócios com restrição, técnico responsável com restrição, empresa recém-aberta, … CRO com menos de 1 ano, RT diferente do RL e CNAE secundário de odontologia.",
+        "secao": "4-faq",
+        "ref": "Maquininha · 4. FAQ"
+      },
+      "agente": null,
+      "nota": "A Claudinha só diz \"Confirmar CRO ativo no CFO\", sem o corte de 1 ano, e não sabe que o motivo fica em pos_rejection_reason no backoffice. Outra área citou CRO de 6 meses; o guia (código) diz 1 ano."
+    },
+    {
+      "id": "cla-pos-013",
+      "guia": "maquininha",
+      "tema": "Saque: saldo precisa ser sacado, sempre no valor total",
+      "tipo": "so_no_docs",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "O **valor do saque é fixo no saldo total**: o campo de valor vem **desabilitado** e preenchido com todo o saldo disponível. **Não dá pra sacar valor parcial pela tela**.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Maquininha · 2. Como funciona"
+      },
+      "agente": null,
+      "nota": "A Claudinha trata o repasse como crédito direto em conta e não conhece o saldo nem a tela de saque (/finance/withdraw), o mínimo de R$ 5 e a devolução ao saldo quando o banco rejeita. Em \"o valor não caiu\", o agente deveria checar saldo e saque."
+    },
+    {
+      "id": "cla-pos-014",
+      "guia": "maquininha",
+      "tema": "Antecipação: botão só existe no plano manual",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "O botão de antecipar só aparece pra clínicas com `anticipation_type = manual` (plano \"spot\"). Quem está no `automatic` recebe D+1 todo dia útil sem ação humana e não tem botão.",
+        "secao": "4-faq",
+        "ref": "Maquininha · 4. FAQ"
+      },
+      "agente": null,
+      "nota": "A Claudinha trata \"opção de antecipação ausente\" como pendência de habilitação e escala. Pelo guia, no plano automático isso é o esperado, e a troca de plano é só via backoffice."
+    },
+    {
+      "id": "cla-pos-015",
+      "guia": "maquininha",
+      "tema": "Painel bloqueado: confirmar recebimento e aceitar os termos",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Provável: ela não clicou em \"Recebi a maquininha\" ainda. … Outro motivo: ela ainda não aceitou os Termos de Uso da Maquininha",
+        "secao": "4-faq",
+        "ref": "Maquininha · 4. FAQ"
+      },
+      "agente": null,
+      "nota": "A Claudinha não sabe que as abas Transações e Recebíveis só liberam após o clique em \"Recebi a maquininha\" e o aceite dos termos. É causa comum de \"não consigo ver minhas vendas\"."
+    },
+    {
+      "id": "cla-pos-016",
+      "guia": "maquininha",
+      "tema": "Estorno de Pix: botão só registra o pedido",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Para Pix, existe o botão \"Estornar Pix\" na tela de detalhe; ele **não estorna direto**, só registra no Hubspot a intenção",
+        "secao": "4-faq",
+        "ref": "Maquininha · 4. FAQ"
+      },
+      "agente": null,
+      "nota": "A Claudinha não cobre o estorno de Pix. Sem isso, o agente pode dizer que o estorno já foi feito quando a clínica só clicou no botão; o time interno conclui depois."
+    },
+    {
+      "id": "cla-pos-017",
+      "guia": "maquininha",
+      "tema": "Aparelho adicional: um por credenciamento",
+      "tipo": "so_no_docs",
+      "severidade": "baixa",
+      "capim_docs": {
+        "texto": "**Quantidade na ordem é fixa em 1 aparelho** por credenciamento (`POS_QUANTITY = 1`). Não existe fluxo de pedido de aparelho adicional pela tela.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Maquininha · 2. Como funciona"
+      },
+      "agente": null,
+      "nota": "A Claudinha prevê \"maquininha adicional\" e coleta \"quantidade de equipamentos\", sem dizer que não há pedido de aparelho extra pela tela."
+    },
+    {
+      "id": "cla-pos-018",
+      "guia": "maquininha",
+      "tema": "Conta bancária: titularidade e retenção do repasse",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Se a conta estiver irregular, cancelada, incorreta ou desatualizada, os valores podem ser retidos até a regularização.",
+        "ref": "POS/02_regras_comerciais_e_operacionais_pos.md",
+        "url": "https://drive.google.com/file/d/1NLZeX_Lc0K-gYuJD2o5qNAbKnjEh1cNs/view?usp=drivesdk"
+      },
+      "nota": "Responde em parte a lacuna do guia (caminho oficial para trocar a conta). A Claudinha pede comprovante bancário com titular e CPF/CNPJ de credenciamento e só considera concluído após o time confirmar."
+    },
+    {
+      "id": "cla-pos-019",
+      "guia": "maquininha",
+      "tema": "Antecipação recorrente: prazo para cancelar",
+      "tipo": "so_no_agente",
+      "severidade": "baixa",
+      "capim_docs": null,
+      "agente": {
+        "texto": "O cancelamento da antecipação recorrente produz efeito após 2 dias úteis da solicitação confirmada, conforme os termos analisados.",
+        "ref": "POS/POS - Capininha e Regras Operacionais.md",
+        "url": "https://drive.google.com/file/d/1AiZuRIrKzr-csxmFaiaQe1wQkr6QSXH0/view?usp=drivesdk"
+      },
+      "nota": "O guia só diz que mudar manual ↔ automático é via backoffice, sem prazo. A Claudinha diz ainda que antecipações já desembolsadas são irrevogáveis."
+    },
+    {
+      "id": "cla-pos-020",
+      "guia": "maquininha",
+      "tema": "Chargeback: defesa e tarifas",
+      "tipo": "so_no_agente",
+      "severidade": "baixa",
+      "capim_docs": null,
+      "agente": {
+        "texto": "o estabelecimento deve apresentar documentos dentro do prazo; … podem existir tarifas e outros encargos;",
+        "ref": "POS/02_regras_comerciais_e_operacionais_pos.md",
+        "url": "https://drive.google.com/file/d/1NLZeX_Lc0K-gYuJD2o5qNAbKnjEh1cNs/view?usp=drivesdk"
+      },
+      "nota": "Responde em parte a lacuna do guia (\"Caminho de defesa\"). Não diz como a clínica é notificada, que segue 🚧 PENDENTE nos dois lados."
+    },
+    {
+      "id": "cla-saas-001",
+      "guia": "inicio",
+      "tema": "Capim Dash: definição como plataforma só de gestão",
+      "tipo": "conflito",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**Home simples** (rota interna `/home`): título \"Escolha uma área para iniciar\" e três cards de navegação (Agenda, Pacientes e Financeiro). Só existe para clínicas **sem** `saas_enabled`, ou seja, clínicas que usam o produto de financiamento sem o sistema de gestão.",
+        "secao": "1-visao-geral",
+        "ref": "Início · 1. 🎯 Visão geral"
+      },
+      "agente": {
+        "texto": "### Capim Dash\nPlataforma SaaS de gestão para clínicas, com módulos ligados à rotina administrativa e ao relacionamento com pacientes.",
+        "ref": "01_Fundamentos_Capim/Glossário Capim.md",
+        "url": "https://drive.google.com/file/d/1wHSOanRFL6Hb6xcKlTp9-00dZlPN86ei/view?usp=drivesdk"
+      },
+      "nota": "O glossário trata o Dash como sinônimo do SaaS de gestão. No produto, o mesmo dash atende clínicas sem sistema de gestão (só financiamento/maquininha), que veem Home simples, têm Agenda e Pacientes travados e ficam bloqueadas no app. O capim-docs (nov/2026) é mais recente e vem do código."
+    },
+    {
+      "id": "cla-saas-002",
+      "guia": null,
+      "tema": "Plano SaaS: cancelamento, renovação e arrependimento",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "A renovação ocorre automaticamente por períodos equivalentes enquanto o plano não for cancelado.\n- A primeira contratação pode ser cancelada em até 7 dias corridos, sem ônus … O cancelamento pode ser solicitado a qualquer momento, mas produz efeito ao final do período vigente.",
+        "ref": "02_Produtos/SaaS - Capim Dash e Regras Operacionais.md",
+        "url": "https://drive.google.com/file/d/1_c0F0bSPZFdbQSUtr4Bxb6O9BunGzRom/view?usp=drivesdk"
+      },
+      "nota": "O capim-docs exclui de propósito \"Assinatura/Plano da Capim (lifecycle comercial, separado)\" (_resumo-geral). Regra vem dos Termos de Uso; nenhum guia confirma ou contradiz."
+    },
+    {
+      "id": "cla-saas-003",
+      "guia": null,
+      "tema": "Plano SaaS: inadimplência, multa e suspensão de acesso",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Atrasos podem gerar multa de 2%, juros de 1% ao mês e atualização monetária … Após mais de 7 dias de mora, o acesso pode ser suspenso a critério da Capim.\n- Atraso superior a 30 dias pode levar à rescisão motivada.",
+        "ref": "02_Produtos/SaaS - Capim Dash e Regras Operacionais.md",
+        "url": "https://drive.google.com/file/d/1_c0F0bSPZFdbQSUtr4Bxb6O9BunGzRom/view?usp=drivesdk"
+      },
+      "nota": "Sem guia correspondente (assinatura fora do escopo). O capim-docs só mostra efeitos de \"assinatura não ativa\" em telas (Relatórios, Campanhas, Indique & Ganhe somem), sem prazos de mora."
+    },
+    {
+      "id": "cla-saas-004",
+      "guia": "inicio",
+      "tema": "Plano SaaS: upgrade e downgrade",
+      "tipo": "so_no_agente",
+      "severidade": "baixa",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Downgrade entra em vigor no ciclo seguinte.\n- Upgrade pode ser aplicado imediatamente, com apuração proporcional conforme a regra contratual.",
+        "ref": "02_Produtos/SaaS - Capim Dash e Regras Operacionais.md",
+        "url": "https://drive.google.com/file/d/1_c0F0bSPZFdbQSUtr4Bxb6O9BunGzRom/view?usp=drivesdk"
+      },
+      "nota": "O guia de Início só cita o card \"Upgrade de plano\" (desconto para plano anual, para clínicas elegíveis), sem regra de vigência ou cobrança. A regra da Claudinha vem dos Termos de Uso."
+    },
+    {
+      "id": "cla-saas-005",
+      "guia": "configuracoes-clinica",
+      "tema": "Exportação de dados ao sair: prazo, formato e quem faz",
+      "tipo": "so_no_agente",
+      "severidade": "media",
+      "capim_docs": null,
+      "agente": {
+        "texto": "Os termos analisados permitem extração até o encerramento ou solicitação de entrega em até 15 dias após o encerramento. Em casos operacionais recentes, houve compromisso de entrega em até 2 dias úteis. … A entrega pode ocorrer em pasta compactada `.zip`, com arquivos `.csv` e glossário explicativo.",
+        "ref": "03_Politicas_Processos/SaaS - Migração e Exportação de Dados.md",
+        "url": "https://drive.google.com/file/d/1O6rzpTtCqaRVBUXbqqk1KcMqLxhc8CVq/view?usp=drivesdk"
+      },
+      "nota": "O guia de Configurações cobre só a migração de entrada (importação). O capim-docs não tem processo de exportação de saída. A própria Claudinha diz que 2 dias úteis não é regra."
+    },
+    {
+      "id": "cla-saas-006",
+      "guia": "configuracoes-clinica",
+      "tema": "Migração de dados para a Capim: autosserviço, formatos e softwares",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "Vai em Configurações → Migração de dados (Importação de dados). … qual era o software antigo (lista oficial: **Simples Dental, Dontus, Clinicorp, Dental Office, Controle Odonto, Outros**) … Anexa arquivos (planilhas xls/xlsx/csv ou zip, limite 100 MB por arquivo) e envia.",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Configurações da clínica · 2. ⚙️ Como funciona (passo a passo)"
+      },
+      "agente": null,
+      "nota": "A Claudinha só trata exportação de saída e diz que \"não é migração automática\". Não sabe que a importação é feita pela própria clínica, com status em tempo real, Pacientes obrigatório e sem rollback. Prazo esperado (SLA) segue 🚧 PENDENTE no guia: nem \"minutos\" nem \"5 a 7 dias úteis\" aparecem."
+    },
+    {
+      "id": "cla-saas-007",
+      "guia": "configuracoes-clinica",
+      "tema": "Migração de dados: sem rollback e status parcial",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**Migração não tem rollback automático.** Se o módulo entra parcialmente, fica parcialmente. Correção depende de reenvio do módulo ou intervenção da Sustentação.",
+        "secao": "6-limitacoes-conhecidas",
+        "ref": "Configurações da clínica · 6. ⚠️ Limitações conhecidas"
+      },
+      "agente": null,
+      "nota": "Útil para clínica que reclama de dado faltando após migrar. A Claudinha não cobre o status partially_migrated nem o reenvio por módulo."
+    },
+    {
+      "id": "cla-saas-008",
+      "guia": "configuracoes-clinica",
+      "tema": "Usuários e cadastro: o que não se edita pela tela",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**CNPJ, CPF e razão social não são editáveis pela UI.** Mudança só via Time de Sustentação. … **E-mail do usuário não é editável** depois de criado.",
+        "secao": "6-limitacoes-conhecidas",
+        "ref": "Configurações da clínica · 6. ⚠️ Limitações conhecidas"
+      },
+      "agente": null,
+      "nota": "\"Login, acesso e usuários\" é categoria de ticket da Claudinha, mas a base só diz que a clínica gerencia usuários. Sem isso, o agente pode orientar a trocar e-mail ou CNPJ pela tela."
+    },
+    {
+      "id": "cla-saas-009",
+      "guia": "agenda",
+      "tema": "Notificações ao paciente: só WhatsApp, horários fixos",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**Notificação ao paciente é só por WhatsApp.** Não existe envio por SMS nem por e-mail. Os horários dos lembretes (1h e 24h antes da consulta) são fixos, não configuráveis pela clínica.",
+        "secao": "6-limitacoes-conhecidas",
+        "ref": "Agenda · 6. ⚠️ Limitações conhecidas"
+      },
+      "agente": null,
+      "nota": "A Claudinha cita \"comunicação por WhatsApp\" e a dor \"WhatsApp / Meta\", mas não a regra. Sem ela, o agente pode prometer SMS, e-mail ou outro horário de lembrete."
+    },
+    {
+      "id": "cla-saas-010",
+      "guia": "orcamentos",
+      "tema": "Orçamentos: aprovação e exclusão irreversíveis",
+      "tipo": "so_no_docs",
+      "severidade": "alta",
+      "capim_docs": {
+        "texto": "**Não há \"voltar pra rascunho\" depois de aprovar.** Aprovou, fechou. … **Cancelamento (exclusão) tem 4 estratégias e a escolha errada perde dados** (ex: `full_wipe` apaga pagamentos já recebidos). Sem rollback automático.",
+        "secao": "6-limitacoes-conhecidas",
+        "ref": "Orçamentos · 6. ⚠️ Limitações conhecidas"
+      },
+      "agente": null,
+      "nota": "Regra que mexe com dinheiro já recebido. A Claudinha não tem nada sobre Orçamentos e poderia orientar a \"excluir e refazer\" sem alertar sobre o full_wipe."
+    },
+    {
+      "id": "cla-saas-011",
+      "guia": "documentos",
+      "tema": "Assinatura digital: certificado ICP-Brasil só no receituário",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "**Receituário exige certificado digital ICP-Brasil para assinatura**, por regulação. Os outros tipos assinam \"sem certificado\" (assinatura eletrônica simples).",
+        "secao": "2-como-funciona-passo-a-passo",
+        "ref": "Documentos · 2. ⚙️ Como funciona (passo a passo)"
+      },
+      "agente": null,
+      "nota": "O Índice da Claudinha lista \"certificado digital\" como lacuna prioritária e a Visão Geral cita a dor \"documentos e assinatura do dentista\". O guia responde essa lacuna."
+    },
+    {
+      "id": "cla-saas-012",
+      "guia": "relatorios",
+      "tema": "Relatórios: sem exportação nativa",
+      "tipo": "so_no_docs",
+      "severidade": "baixa",
+      "capim_docs": {
+        "texto": "**Não há export nativo da Capim** para PDF ou Excel/CSV dentro do módulo Relatórios. Só o que o Metabase oferecer no iframe.",
+        "secao": "6-limitacoes-conhecidas",
+        "ref": "Relatórios · 6. ⚠️ Limitações conhecidas"
+      },
+      "agente": null,
+      "nota": "O glossário da Claudinha define \"Exportação de dados\" de forma genérica. Pedido de \"exportar relatório\" é comum e o agente não sabe que não há botão próprio."
+    },
+    {
+      "id": "cla-saas-013",
+      "guia": "central-camila",
+      "tema": "Camila: assistente de IA da clínica no WhatsApp",
+      "tipo": "so_no_docs",
+      "severidade": "media",
+      "capim_docs": {
+        "texto": "A Camila é a assistente de IA que atende o paciente direto pelo número da clínica: interpreta o que o paciente quer, faz o primeiro cadastro, consulta a agenda em tempo real, sugere e marca horário.",
+        "secao": "1-visao-geral",
+        "ref": "Central da Camila · 1. 🎯 Visão geral"
+      },
+      "agente": null,
+      "nota": "A Visão Geral da Claudinha lista os produtos e só cita a Claudinha como IA. Não menciona a Camila, a Central da Camila nem as Campanhas (Camila Connects), produtos vendidos à clínica."
+    }
+  ]
+}
